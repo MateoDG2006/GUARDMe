@@ -1,0 +1,660 @@
+// Fuente de verdad del esquema. Las políticas RLS, CHECK, funciones e índices
+// parciales viven en prisma/migrations/* como SQL a mano (--create-only).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL_API")
+  directUrl = env("DATABASE_URL_MIGRATIONS")
+  schemas   = ["guardme", "identity"]
+}
+
+model AuditLog {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
+  actorAccountId String?  @map("actor_account_id") @db.Uuid
+  actorKind      String?  @map("actor_kind")
+  profileId      String?  @map("profile_id") @db.Uuid
+  operation      String
+  result         String
+  at             DateTime @default(now()) @db.Timestamptz(6)
+  correlationId  String?  @map("correlation_id") @db.Uuid
+  details        Json     @default("{}")
+
+  @@map("audit_log")
+  @@schema("guardme")
+}
+
+model IdempotencyKey {
+  accountId    String   @map("account_id") @db.Uuid
+  key          String
+  route        String
+  requestHash  String   @map("request_hash")
+  statusCode   Int      @map("status_code")
+  responseBody Json     @map("response_body")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@id([accountId, key])
+  @@map("idempotency_keys")
+  @@schema("guardme")
+}
+
+model PendingAction {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type         String
+  resourceType String    @map("resource_type")
+  resourceId   String    @map("resource_id") @db.Uuid
+  dedupeKey    String    @unique @map("dedupe_key")
+  payload      Json      @default("{}")
+  status       String    @default("scheduled")
+  runAt        DateTime  @map("run_at") @db.Timestamptz(6)
+  attempts     Int       @default(0)
+  maxAttempts  Int       @default(5) @map("max_attempts")
+  leaseUntil   DateTime? @map("lease_until") @db.Timestamptz(6)
+  lastError    String?   @map("last_error")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status, runAt], map: "pending_actions_status_run_at_idx")
+  @@index([resourceType, resourceId], map: "pending_actions_resource_idx")
+  @@map("pending_actions")
+  @@schema("guardme")
+}
+
+model Account {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authUserId     String   @unique @map("auth_user_id") @db.Uuid
+  displayName    String   @default("") @map("display_name")
+  onboardingKind String   @map("onboarding_kind")
+  status         String   @default("active")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version        Int      @default(1)
+  authUser       User     @relation(fields: [authUserId], references: [id], onDelete: Restrict)
+
+  @@map("accounts")
+  @@schema("guardme")
+}
+
+model Installation {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId            String    @map("account_id") @db.Uuid
+  clientInstallationId String    @map("client_installation_id") @db.Uuid
+  authSessionId        String    @map("auth_session_id") @db.Uuid
+  platform             String
+  appVersion           String    @map("app_version")
+  pushToken            String?   @map("push_token")
+  pushTokenUpdatedAt   DateTime? @map("push_token_updated_at") @db.Timestamptz(6)
+  status               String    @default("active")
+  revokedAt            DateTime? @map("revoked_at") @db.Timestamptz(6)
+  revokeReason         String?   @map("revoke_reason")
+  lastSeenAt           DateTime  @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  // índices parciales únicos: installations_active_* en migración SQL
+
+  @@map("installations")
+  @@schema("guardme")
+}
+
+model Profile {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  displayName        String   @map("display_name")
+  timeZone           String   @default("America/Panama") @map("time_zone")
+  status             String   @default("active")
+  createdByAccountId String   @map("created_by_account_id") @db.Uuid
+  contactsVersion    Int      @default(1) @map("contacts_version")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version            Int      @default(1)
+
+  @@map("profiles")
+  @@schema("guardme")
+}
+
+model ProfileAccess {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId           String    @map("account_id") @db.Uuid
+  profileId           String    @map("profile_id") @db.Uuid
+  relation            String
+  caregiverCategory   String?   @map("caregiver_category")
+  status              String    @default("active")
+  grantedAt           DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  grantedVia          String    @map("granted_via")
+  revokedAt           DateTime? @map("revoked_at") @db.Timestamptz(6)
+  revokedByAccountId  String?   @map("revoked_by_account_id") @db.Uuid
+  updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version             Int       @default(1)
+  // índices parciales: profile_access_active_* en migración SQL
+
+  @@map("profile_access")
+  @@schema("guardme")
+}
+
+model Invitation {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId            String    @map("profile_id") @db.Uuid
+  issuedByAccountId    String    @map("issued_by_account_id") @db.Uuid
+  secretHash           String    @unique @map("secret_hash")
+  recipientHint        String?   @map("recipient_hint")
+  status               String    @default("pending")
+  expiresAt            DateTime  @map("expires_at") @db.Timestamptz(6)
+  consumedByAccountId  String?   @map("consumed_by_account_id") @db.Uuid
+  consumedAt           DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAccessId      String?   @map("created_access_id") @db.Uuid
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("invitations")
+  @@schema("guardme")
+}
+
+model SupervisedEnrollment {
+  id                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId                  String    @map("profile_id") @db.Uuid
+  issuedByAccountId          String    @map("issued_by_account_id") @db.Uuid
+  purpose                    String
+  codeHash                   String    @unique @map("code_hash")
+  status                     String    @default("pending")
+  expiresAt                  DateTime  @map("expires_at") @db.Timestamptz(6)
+  consumedByAccountId        String?   @map("consumed_by_account_id") @db.Uuid
+  consumedByInstallationId   String?   @map("consumed_by_installation_id") @db.Uuid
+  consumedAt                 DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt                  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("supervised_enrollments")
+  @@schema("guardme")
+}
+
+model OnboardingStep {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId String   @map("account_id") @db.Uuid
+  profileId String?  @map("profile_id") @db.Uuid
+  step      String
+  status    String
+  reason    String?
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("onboarding_steps")
+  @@schema("guardme")
+}
+
+model Cane {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  serial          String   @unique
+  model           String
+  firmwareVersion String?  @map("firmware_version")
+  claimSecretHash String   @map("claim_secret_hash")
+  status          String   @default("available")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version         Int      @default(1)
+
+  @@map("canes")
+  @@schema("guardme")
+}
+
+model CaneAssignment {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  caneId              String    @map("cane_id") @db.Uuid
+  profileId           String    @map("profile_id") @db.Uuid
+  startedAt           DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  endedAt             DateTime? @map("ended_at") @db.Timestamptz(6)
+  assignedByAccountId String    @map("assigned_by_account_id") @db.Uuid
+  endedByAccountId    String?   @map("ended_by_account_id") @db.Uuid
+  // índice parcial único: cane_assignments_active_idx en migración SQL
+
+  @@map("cane_assignments")
+  @@schema("guardme")
+}
+
+model Gateway {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  caneId           String    @map("cane_id") @db.Uuid
+  caneAssignmentId String    @map("cane_assignment_id") @db.Uuid
+  installationId   String    @map("installation_id") @db.Uuid
+  startedAt        DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  endedAt          DateTime? @map("ended_at") @db.Timestamptz(6)
+  endReason        String?   @map("end_reason")
+  lastEventAt      DateTime? @map("last_event_at") @db.Timestamptz(6)
+  // índice parcial único: gateways_active_idx en migración SQL
+
+  @@map("gateways")
+  @@schema("guardme")
+}
+
+model Contact {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId       String   @map("profile_id") @db.Uuid
+  displayName     String   @map("display_name")
+  phoneE164       String   @map("phone_e164")
+  priority        Int?     @db.SmallInt
+  linkedAccountId String?  @map("linked_account_id") @db.Uuid
+  status          String   @default("active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version         Int      @default(1)
+  // índice parcial único: contacts_active_priority_idx en migración SQL
+
+  @@map("contacts")
+  @@schema("guardme")
+}
+
+model EventReceipt {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceKey        String   @unique @map("source_key")
+  kind             String
+  installationId   String   @map("installation_id") @db.Uuid
+  caneId           String   @map("cane_id") @db.Uuid
+  caneAssignmentId String   @map("cane_assignment_id") @db.Uuid
+  occurredAt       DateTime @map("occurred_at") @db.Timestamptz(6)
+  receivedAt       DateTime @default(now()) @map("received_at") @db.Timestamptz(6)
+  detail           String?
+
+  @@map("event_receipts")
+  @@schema("guardme")
+}
+
+model FalseAlarmCounter {
+  profileId String   @map("profile_id") @db.Uuid
+  caneId    String   @map("cane_id") @db.Uuid
+  total     Int      @default(0)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@id([profileId, caneId])
+  @@map("false_alarm_counters")
+  @@schema("guardme")
+}
+
+model CaneTelemetryLatest {
+  caneAssignmentId     String   @id @map("cane_assignment_id") @db.Uuid
+  caneId               String   @map("cane_id") @db.Uuid
+  batteryPct           Int?     @map("battery_pct") @db.SmallInt
+  charging             Boolean?
+  sensorStatus         String?  @map("sensor_status")
+  linkStatus           String?  @map("link_status")
+  capturedAt           DateTime @map("captured_at") @db.Timestamptz(6)
+  receivedAt           DateTime @map("received_at") @db.Timestamptz(6)
+  sourceInstallationId String   @map("source_installation_id") @db.Uuid
+
+  @@map("cane_telemetry_latest")
+  @@schema("guardme")
+}
+
+model Incident {
+  id                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId               String    @map("profile_id") @db.Uuid
+  caneId                  String?   @map("cane_id") @db.Uuid
+  caneAssignmentId        String?   @map("cane_assignment_id") @db.Uuid
+  origin                  String
+  sourceKey               String    @unique @map("source_key")
+  status                  String
+  escalationReason        String?   @map("escalation_reason")
+  occurredAt              DateTime  @map("occurred_at") @db.Timestamptz(6)
+  reportedOccurredAt      DateTime  @map("reported_occurred_at") @db.Timestamptz(6)
+  receivedAt              DateTime  @default(now()) @map("received_at") @db.Timestamptz(6)
+  isDelayed               Boolean   @default(false) @map("is_delayed")
+  closedAt                DateTime? @map("closed_at") @db.Timestamptz(6)
+  closedByAccountId       String?   @map("closed_by_account_id") @db.Uuid
+  createdByInstallationId String    @map("created_by_installation_id") @db.Uuid
+  context                 Json      @default("{}")
+  createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version                 Int       @default(1)
+
+  @@index([profileId, occurredAt, id], map: "incidents_profile_occurred_idx")
+  // índice parcial: incidents_open_status_idx en migración SQL
+  @@map("incidents")
+  @@schema("guardme")
+}
+
+model IncidentEvent {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  incidentId          String   @map("incident_id") @db.Uuid
+  type                String
+  actorKind           String   @map("actor_kind")
+  actorAccountId      String?  @map("actor_account_id") @db.Uuid
+  actorInstallationId String?  @map("actor_installation_id") @db.Uuid
+  at                  DateTime @default(now()) @db.Timestamptz(6)
+  context             Json     @default("{}")
+
+  @@index([incidentId, at, id], map: "incident_events_incident_idx")
+  @@map("incident_events")
+  @@schema("guardme")
+}
+
+model Notification {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type               String
+  profileId          String   @map("profile_id") @db.Uuid
+  recipientAccountId String   @map("recipient_account_id") @db.Uuid
+  resourceType       String   @map("resource_type")
+  resourceId         String   @map("resource_id") @db.Uuid
+  resourceVersion    Int      @map("resource_version")
+  dedupeKey          String   @unique @map("dedupe_key")
+  status             String   @default("pending")
+  priority           String
+  expiresAt          DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([recipientAccountId, createdAt, id], map: "notifications_recipient_idx")
+  @@map("notifications")
+  @@schema("guardme")
+}
+
+model NotificationDelivery {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  notificationId String    @map("notification_id") @db.Uuid
+  installationId String    @map("installation_id") @db.Uuid
+  channel        String    @default("fcm")
+  providerRef    String?   @map("provider_ref")
+  status         String
+  acceptedAt     DateTime? @map("accepted_at") @db.Timestamptz(6)
+  receivedAt     DateTime? @map("received_at") @db.Timestamptz(6)
+  openedAt       DateTime? @map("opened_at") @db.Timestamptz(6)
+  attempts       Int       @default(0)
+  errorCode      String?   @map("error_code")
+
+  @@unique([notificationId, installationId])
+  @@map("notification_deliveries")
+  @@schema("guardme")
+}
+
+model CallPlan {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  incidentId       String   @unique @map("incident_id") @db.Uuid
+  policyVersion    String   @map("policy_version")
+  contactsSnapshot Json     @map("contacts_snapshot")
+  status           String
+  stoppedReason    String?  @map("stopped_reason")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("call_plans")
+  @@schema("guardme")
+}
+
+model CallAttempt {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  callPlanId        String    @map("call_plan_id") @db.Uuid
+  incidentId        String    @map("incident_id") @db.Uuid
+  ordinal           Int       @db.SmallInt
+  contactId         String    @map("contact_id") @db.Uuid
+  contactName       String    @map("contact_name")
+  contactPhoneE164  String    @map("contact_phone_e164")
+  linkedAccountId   String?   @map("linked_account_id") @db.Uuid
+  channel           String    @default("pstn")
+  provider          String
+  providerRef       String?   @map("provider_ref")
+  status            String
+  statusReason      String?   @map("status_reason")
+  requestedAt       DateTime? @map("requested_at") @db.Timestamptz(6)
+  answeredAt        DateTime? @map("answered_at") @db.Timestamptz(6)
+  endedAt           DateTime? @map("ended_at") @db.Timestamptz(6)
+  lastProviderRank  Int       @default(0) @map("last_provider_rank") @db.SmallInt
+  version           Int       @default(1)
+  updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([callPlanId, ordinal])
+  @@map("call_attempts")
+  @@schema("guardme")
+}
+
+model ProviderEvent {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  provider          String
+  eventKey          String    @map("event_key")
+  providerRef       String    @map("provider_ref")
+  status            String
+  sequence          Int?
+  providerTimestamp DateTime? @map("provider_timestamp") @db.Timestamptz(6)
+  receivedAt        DateTime  @default(now()) @map("received_at") @db.Timestamptz(6)
+  appliedAt         DateTime? @map("applied_at") @db.Timestamptz(6)
+  applyResult       String?   @map("apply_result")
+
+  @@unique([provider, eventKey])
+  @@map("provider_events")
+  @@schema("guardme")
+}
+
+model CaregiverDecision {
+  id                     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  incidentId             String   @map("incident_id") @db.Uuid
+  accountId              String   @map("account_id") @db.Uuid
+  option                 String
+  at                     DateTime @default(now()) @db.Timestamptz(6)
+  appliedIncidentVersion Int      @map("applied_incident_version")
+  resultingStatus        String   @map("resulting_status")
+
+  @@map("caregiver_decisions")
+  @@schema("guardme")
+}
+
+model Reminder {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId              String    @map("profile_id") @db.Uuid
+  kind                   String
+  title                  String
+  notes                  String?
+  authorAccountId        String    @map("author_account_id") @db.Uuid
+  authorRelation         String    @map("author_relation")
+  status                 String    @default("active")
+  deactivatedAt          DateTime? @map("deactivated_at") @db.Timestamptz(6)
+  deactivatedByAccountId String?   @map("deactivated_by_account_id") @db.Uuid
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  version                Int       @default(1)
+
+  @@map("reminders")
+  @@schema("guardme")
+}
+
+model ReminderSchedule {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reminderId  String    @map("reminder_id") @db.Uuid
+  localTime   DateTime  @map("local_time") @db.Time(6)
+  daysOfWeek  Int[]     @map("days_of_week") @db.SmallInt
+  timeZone    String    @map("time_zone")
+  validFrom   DateTime  @map("valid_from") @db.Date
+  validTo     DateTime? @map("valid_to") @db.Date
+  status      String    @default("active")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("reminder_schedules")
+  @@schema("guardme")
+}
+
+model ReminderOccurrence {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reminderId             String    @map("reminder_id") @db.Uuid
+  scheduleId             String    @map("schedule_id") @db.Uuid
+  scheduledFor           DateTime  @map("scheduled_for") @db.Timestamptz(6)
+  status                 String    @default("scheduled")
+  cancelReason           String?   @map("cancel_reason")
+  postponedUntil         DateTime? @map("postponed_until") @db.Timestamptz(6)
+  respondedByAccountId   String?   @map("responded_by_account_id") @db.Uuid
+  respondedAt            DateTime? @map("responded_at") @db.Timestamptz(6)
+  responseInstallationId String?   @map("response_installation_id") @db.Uuid
+  version                Int       @default(1)
+  updatedAt              DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([scheduleId, scheduledFor])
+  @@map("reminder_occurrences")
+  @@schema("guardme")
+}
+
+model Followup {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  incidentId       String    @unique @map("incident_id") @db.Uuid
+  profileId        String    @map("profile_id") @db.Uuid
+  closingAccountId String    @map("closing_account_id") @db.Uuid
+  timeZone         String    @map("time_zone")
+  status           String
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  closedAt         DateTime? @map("closed_at") @db.Timestamptz(6)
+  version          Int       @default(1)
+  updatedAt        DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("followups")
+  @@schema("guardme")
+}
+
+model FollowupQuestion {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  followupId          String    @map("followup_id") @db.Uuid
+  round               String
+  recipientKind       String    @map("recipient_kind")
+  recipientAccountIds String[]  @map("recipient_account_ids") @db.Uuid
+  publishAt           DateTime  @map("publish_at") @db.Timestamptz(6)
+  deadlineAt          DateTime  @map("deadline_at") @db.Timestamptz(6)
+  publishedAt         DateTime? @map("published_at") @db.Timestamptz(6)
+  status              String    @default("scheduled")
+  version             Int       @default(1)
+  updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([followupId, round])
+  @@map("followup_questions")
+  @@schema("guardme")
+}
+
+model FollowupResponse {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  questionId String   @map("question_id") @db.Uuid
+  accountId  String   @map("account_id") @db.Uuid
+  option     String
+  at         DateTime @default(now()) @db.Timestamptz(6)
+  applied    Boolean
+
+  @@map("followup_responses")
+  @@schema("guardme")
+}
+
+model LocationConsent {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profileId          String    @map("profile_id") @db.Uuid
+  grantedByAccountId String    @map("granted_by_account_id") @db.Uuid
+  grantedAt          DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  revokedAt          DateTime? @map("revoked_at") @db.Timestamptz(6)
+  revokedByAccountId String?   @map("revoked_by_account_id") @db.Uuid
+  version            Int       @default(1)
+  updatedAt          DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("location_consents")
+  @@schema("guardme")
+}
+
+model LocationReadGrant {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  consentId String    @map("consent_id") @db.Uuid
+  accountId String    @map("account_id") @db.Uuid
+  grantedAt DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  @@map("location_read_grants")
+  @@schema("guardme")
+}
+
+model LocationLatest {
+  profileId      String   @id @map("profile_id") @db.Uuid
+  lat            Float
+  lng            Float
+  accuracyM      Float    @map("accuracy_m")
+  capturedAt     DateTime @map("captured_at") @db.Timestamptz(6)
+  receivedAt     DateTime @map("received_at") @db.Timestamptz(6)
+  installationId String   @map("installation_id") @db.Uuid
+
+  @@map("location_latest")
+  @@schema("guardme")
+}
+
+model ChangeLog {
+  seq          BigInt   @id @default(autoincrement()) @map("seq")
+  txid         Unsupported("xid8") @default(dbgenerated("pg_current_xact_id()"))
+  profileId    String   @map("profile_id") @db.Uuid
+  resourceType String   @map("resource_type")
+  resourceId   String   @map("resource_id") @db.Uuid
+  op           String
+  version      Int?
+  at           DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("change_log")
+  @@schema("guardme")
+}
+
+model WorkerHeartbeat {
+  workerId   String   @id @map("worker_id")
+  startedAt  DateTime @map("started_at") @db.Timestamptz(6)
+  lastBeatAt DateTime @map("last_beat_at") @db.Timestamptz(6)
+  version    String
+
+  @@map("worker_heartbeats")
+  @@schema("guardme")
+}
+
+// Better Auth (identity). AuthAccount evita chocar con Account de dominio.
+
+model User {
+  id            String        @id @db.Uuid
+  name          String
+  email         String        @unique
+  emailVerified Boolean       @default(false) @map("email_verified")
+  image         String?
+  isAnonymous   Boolean       @default(false) @map("is_anonymous")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamptz(6)
+  sessions      Session[]
+  accounts      AuthAccount[]
+  domainAccounts Account[]
+
+  @@map("users")
+  @@schema("identity")
+}
+
+model Session {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  token     String   @unique
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "sessions_user_idx")
+  @@map("sessions")
+  @@schema("identity")
+}
+
+model AuthAccount {
+  id                    String    @id @db.Uuid
+  userId                String    @map("user_id") @db.Uuid
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at") @db.Timestamptz(6)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at") @db.Timestamptz(6)
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "accounts_user_idx")
+  @@map("accounts")
+  @@schema("identity")
+}
+
+model Verification {
+  id         String   @id @db.Uuid
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("verifications")
+  @@schema("identity")
+}

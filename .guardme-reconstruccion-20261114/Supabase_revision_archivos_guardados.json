@@ -1,0 +1,50 @@
+[
+  {
+    "local_path": "D:\\PROYECTOS\\GUARDMe\\docs\\backend\\Propuesta_Backend_GUARDMe.md",
+    "operation": "replace_library_file",
+    "status": "succeeded",
+    "path": "/GUARDMe/Propuesta_Backend_GUARDMe.md",
+    "file_id": "file_00000000844081f59e0906368cb473b4",
+    "library_file_id": "libfile_856c231c19bc819186a42b13a9a6c5c4",
+    "file_name": "Propuesta_Backend_GUARDMe.md",
+    "current_version_number": 1,
+    "restored_from_version_number": null,
+    "xattrs": [
+      {
+        "name": "user.library-file-version",
+        "value": "1"
+      }
+    ],
+    "directory_id": "6af898ab70888191bf7224b6b42cb714",
+    "mime_type": "text/markdown",
+    "library_artifact_type": "report",
+    "file_size_bytes": 52248,
+    "external_connectors_accessed": false,
+    "local_xattrs_applied": false,
+    "identity_retained_in_record": true
+  },
+  {
+    "local_path": "D:\\PROYECTOS\\GUARDMe\\docs\\backend\\GUARDMe_Backend_10_Documentos_20261114.zip",
+    "operation": "replace_library_file",
+    "status": "succeeded",
+    "path": "/GUARDMe/GUARDMe_Backend_10_Documentos_20261114.zip",
+    "file_id": "file_00000000d1b481f5993a37a528e597c5",
+    "library_file_id": "libfile_bd43ddbdf148819193f87ba09c9a65a6",
+    "file_name": "GUARDMe_Backend_10_Documentos_20261114.zip",
+    "current_version_number": 1,
+    "restored_from_version_number": null,
+    "xattrs": [
+      {
+        "name": "user.library-file-version",
+        "value": "1"
+      }
+    ],
+    "directory_id": "6af898ab70888191bf7224b6b42cb714",
+    "mime_type": "application/zip",
+    "library_artifact_type": "other",
+    "file_size_bytes": 59591,
+    "external_connectors_accessed": false,
+    "local_xattrs_applied": false,
+    "identity_retained_in_record": true
+  }
+]

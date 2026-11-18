@@ -1,0 +1,149 @@
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:40: fun GuardMeRoot() {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:77: private fun DemoGate(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:150: private fun PersonaScenario.route(): String = when (this) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:156: private fun personaScenario(value: String?): PersonaScenario = when (value) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:162: private fun CareRole.route(): String = when (this) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:167: private fun CareScenario.route(): String = when (this) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\GuardMeRoot.kt:173: private fun careScenario(value: String?): CareScenario = when (value) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\MainActivity.kt:11: class MainActivity : ComponentActivity() {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorApp.kt:38: fun CuidadorApp(role: CareRole, scenario: CareScenario, onExit: () -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorApp.kt:113: private fun CareCallOverlay(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorApp.kt:149: private fun careToast(toast: CareToast?): String? = when (toast) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:73: fun CuidadorHome(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:234: fun CuidadorAlert(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:314: private fun timeline(auto: Boolean): List<String> {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:329: fun CuidadorLive(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:363: fun CuidadorNotifications(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:410: fun CuidadorHistory(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:468: fun CuidadorReminders(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:521: fun CuidadorNewReminder(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:601: fun CuidadorCane(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:643: fun CuidadorTeam(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:669: fun CuidadorInvite(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:690: fun CuidadorProfile(state: CuidadorState, viewModel: CuidadorViewModel) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:717: private fun CareScroll(content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:730: private fun CarePage(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:769: private fun CaneToggle(title: String, checked: Boolean, onChange: () -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:774: private fun MemberRow(member: Member) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:799: private fun FilterChip(label: String, selected: Boolean, onClick: () -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:816: private fun Fact(label: String, value: String) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:824: private fun RoleOption(title: String, body: String, selected: Boolean, onClick: () -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:840: private fun Matrix() {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorScreens.kt:872: private fun WeekBars(values: List<Float>) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:6: enum class CareRole { Familiar, Medico }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:8: enum class CareScenario { Home, Fall, Auto911 }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:10: enum class CareTab { Home, History, Reminders, Cane, Team }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:12: enum class HistoryFilter { All, Falls, Meds, Activity }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:14: enum class HistoryKind { Fall, Medication, Activity }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:16: enum class NotifFilter { All, Urgent }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:18: enum class ReminderType { Pill, Visit, Other }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:20: sealed interface CareScreen {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:30: enum class AlertMode { Fall, Auto911 }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:32: enum class CareCall { Emergency, Person }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:34: sealed interface CareToast {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:44: data class Notice(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:56: data class HistoryEvent(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:67: data class CareReminder(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:75: data class ActiveMed(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:80: data class CareVisit(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:86: data class Member(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:96: data class CaneNotices(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:102: data class ReminderDraft(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:115: data class InviteDraft(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:122: data class Profile(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:137: data class CuidadorState(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:238: private fun demoMembers(): List<Member> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:245: private fun demoReminders(): List<CareReminder> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:251: private fun demoNotices(): List<Notice> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorState.kt:261: private fun demoHistory(): List<HistoryEvent> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorViewModel.kt:15: class CuidadorViewModel(role: CareRole, scenario: CareScenario) : ViewModel() {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\cuidador\CuidadorViewModel.kt:219: enum class CaneToggle { Battery, Offline, Still }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\demo\DemoHub.kt:7: object DemoHub {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaApp.kt:28: fun PersonaApp(scenario: PersonaScenario, onExit: () -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaApp.kt:112: private fun personaToast(state: PersonaState): String? {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:69: fun PersonaOverlayHost(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:88: private fun OverlayFrame(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:133: private fun rememberFocus(): FocusRequester = remember { FocusRequester() }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:136: private fun Countdown911(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:197: private fun Calling911(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:245: private fun CallingFamily(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:353: private fun FamilyMissed(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:396: private fun FallOverlay(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:477: private fun EscalationOverlay(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:552: private fun AutoNotice(state: PersonaState) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:589: private fun HelpOverlay(state: PersonaState, automatic: Boolean, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:648: private fun AnsweredOverlay(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:708: private fun CaneRinging(reduced: Boolean, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:756: private fun CaneWaves(reduced: Boolean) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:809: private fun PillOverlay(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:884: fun DoseSheet(state: PersonaState, doseId: String, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaOverlays.kt:949: fun DeleteContactDialog(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:73: fun PersonaHome(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:232: fun PersonaContacts(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:312: private fun ContactLine(contact: Contact, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:355: private fun CircleAction(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:380: fun PersonaEditor(state: PersonaState, onEvent: (PersonaEvent) -> Unit, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:480: fun PersonaReminders(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:555: private fun bucketLabel(bucket: DayBucket): String = when (bucket) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:562: private fun DoseRow(dose: Dose, onClick: () -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:598: fun PersonaCane(state: PersonaState, onEvent: (PersonaEvent) -> Unit) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:675: private fun CaneFact(label: String, value: String, valueColor: androidx.compose.ui.graphics.Color) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaScreens.kt:683: private fun GuideStep(number: String, text: String) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:3: enum class PersonaScenario { Home, Fall, Pill }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:5: enum class PersonaTab { Home, Contacts, Reminders, Cane }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:7: enum class ReminderSegment { Today, Week }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:9: enum class DayBucket { Today, Tomorrow, Later }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:11: enum class AvatarKind { Warm, Blue, Green }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:13: enum class FieldError { Name, Phone }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:15: data class Contact(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:39: data class Dose(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:48: data class Appointment(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:56: data class ContactDraft(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:65: sealed interface ToastMessage {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:72: sealed interface PersonaOverlay {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:98: fun PersonaOverlay.isTimed(): Boolean = when (this) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:108: data class PersonaState(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:170: fun demoContacts(): List<Contact> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:178: fun demoDoses(): List<Dose> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:186: fun demoAppointments(): List<Appointment> = listOf(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:190: sealed interface PersonaEvent {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:229: object PersonaReducer {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaState.kt:545: fun timerIdentity(overlay: PersonaOverlay): String = when (overlay) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\persona\PersonaViewModel.kt:16: class PersonaViewModel(scenario: PersonaScenario) : ViewModel() {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\a11y\Motion.kt:9: fun rememberReducedMotion(): Boolean {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:54: enum class FillKind { Care, Emergency, Ok, Navy }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:57: fun GuardPrimaryButton(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:127: fun GuardOutlineButton(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:159: fun GuardDashedButton(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:209: fun GuardTextAction(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:228: private fun PressableSurface(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardButtons.kt:279: private fun ButtonLabel(text: String, style: TextStyle, color: Color) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:62: data class GuardTab(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:70: fun GuardWordmark(modifier: Modifier = Modifier, size: androidx.compose.ui.unit.TextUnit = 26.sp) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:90: fun BatteryChip(percent: Int, description: String, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:122: fun GuardTabBar(tabs: List<GuardTab>, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:183: fun GuardToastHost(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:218: fun GuardSheet(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardChrome.kt:282: fun IllustratedMap(modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardIcons.kt:21: enum class Glyph {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardIcons.kt:27: fun GuardGlyph(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardIcons.kt:41: fun BatteryGlyph(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardIcons.kt:77: fun GuardLogo(modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardIcons.kt:104: private fun DrawScope.drawGlyph(kind: Glyph, tint: Color, stroke: Stroke) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:47: enum class ChipKind { Taken, Pending, Info, Family, Doctor }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:50: fun GuardCard(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:74: fun GuardChip(text: String, kind: ChipKind, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:95: fun GuardAvatar(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:125: fun MetricCell(value: String, unit: String, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:144: fun GuardScreenTitle(text: String, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:154: fun GuardSectionTitle(text: String, modifier: Modifier = Modifier) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:164: fun GuardTextField(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:208: fun GuardSearchField(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:245: fun GuardToggleRow(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:287: fun GuardSegment(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:326: fun StatusOrb(kind: StatusKind, modifier: Modifier = Modifier, size: Dp = 60.dp) {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\components\GuardSurfaces.kt:348: enum class StatusKind { Ok, Attention, Emergency }
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\theme\Color.kt:5: object GuardColor {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\theme\Color.kt:39: fun Color.darken(amount: Float = 0.08f): Color = copy(
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\theme\Color.kt:45: fun batteryFill(percent: Int): Color = when {
+GuardMeMobile\app\src\main\java\com\example\guardmemobile\ui\theme\Theme.kt:30: fun GuardMeMobileTheme(content: @Composable () -> Unit) {

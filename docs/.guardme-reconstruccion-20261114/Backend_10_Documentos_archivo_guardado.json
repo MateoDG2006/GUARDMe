@@ -1,0 +1,35 @@
+{
+  "local_path": "D:\\PROYECTOS\\GUARDMe\\docs\\backend\\GUARDMe_Backend_10_Documentos_20261114.zip",
+  "operation": "create_library_file",
+  "status": "succeeded",
+  "path": "/GUARDMe/GUARDMe_Backend_10_Documentos_20261114.zip",
+  "file_id": "file_000000001c6081f59ad324d13e9e9d84",
+  "library_file_id": "libfile_bd43ddbdf148819193f87ba09c9a65a6",
+  "file_name": "GUARDMe_Backend_10_Documentos_20261114.zip",
+  "current_version_number": 0,
+  "restored_from_version_number": null,
+  "xattrs": [
+    {
+      "name": "user.library-file-version",
+      "value": "0"
+    }
+  ],
+  "directory_id": "6af898ab70888191bf7224b6b42cb714",
+  "mime_type": "application/zip",
+  "library_artifact_type": "other",
+  "file_size_bytes": 52724,
+  "external_connectors_accessed": false,
+  "contains": [
+    "01_Vision_Alcance_Requisitos_y_Trazabilidad.md",
+    "02_Arquitectura_Stack_Modulos_y_Decisiones.md",
+    "03_Identidad_Usuarios_Permisos_y_Configuracion_Inicial.md",
+    "04_Modelo_de_Datos_Diccionario_y_Persistencia.md",
+    "05_Contratos_API_Eventos_y_Sincronizacion.md",
+    "06_Incidencias_Llamadas_Escalamiento_y_Atencion.md",
+    "07_Notificaciones_Tareas_Recordatorios_y_Seguimientos.md",
+    "08_Integracion_Movil_Baston_Telemetria_y_Ubicacion.md",
+    "09_Seguridad_Privacidad_Despliegue_y_Operacion.md",
+    "10_Plan_de_Implementacion_Pruebas_y_Aceptacion.md"
+  ],
+  "individual_documents_preserved_in_archive": true
+}

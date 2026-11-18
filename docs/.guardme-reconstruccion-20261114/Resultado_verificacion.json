@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-14",
+  "removedFiles": [
+    "README.md",
+    "docs/ui/01-fundamentos.md",
+    "docs/ui/02-persona.md",
+    "docs/ui/03-cuidador.md",
+    "docs/ui/04-handoff.md",
+    "docs/ui/README.md"
+  ],
+  "removedDirectories": [
+    "docs/ui",
+    "docs"
+  ],
+  "documentationOriginalsVerified": 6,
+  "protectedProjectFilesVerified": 66,
+  "sourceResourcesLicensesAndConfigUnchanged": true,
+  "officialDocsReconstructionStarted": false,
+  "tests": {
+    "command": "gradlew.bat --offline testDebugUnitTest --console=plain",
+    "status": "blocked_before_execution",
+    "reason": "Access denied to Gradle wrapper distribution ZIP lock in user .gradle cache"
+  }
+}

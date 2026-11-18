@@ -1,0 +1,10 @@
+allowBuilds:
+  '@parcel/watcher': true
+  prisma: true
+  '@prisma/engines': true
+  '@prisma/client': true
+  esbuild: true
+  supabase: true
+  '@firebase/util': true
+  protobufjs: true
+  '@scarf/scarf': false

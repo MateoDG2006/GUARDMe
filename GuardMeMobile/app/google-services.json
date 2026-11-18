@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650468522385",
+    "project_id": "guardme-335dd",
+    "storage_bucket": "guardme-335dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650468522385:android:e85a6b197af4bc78924230",
+        "android_client_info": {
+          "package_name": "com.example.guardmemobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBADPvcAykH5TUxZSd8LWzLgu56WEyt4cQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

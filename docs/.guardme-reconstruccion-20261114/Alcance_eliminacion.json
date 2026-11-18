@@ -1,0 +1,32 @@
+[
+  {
+    "path": "docs/ui/01-fundamentos.md",
+    "bytes": 11949,
+    "sha256": "B0F3FB3D777934F85971391B12D8CD2DD502BA0ED4B36D3C6BD4D389032B1EC1"
+  },
+  {
+    "path": "docs/ui/02-persona.md",
+    "bytes": 16701,
+    "sha256": "3F6FC81302869384D1EDE1E7B8F16D66587E52355AA47C5DF5664DE6BB8F99D2"
+  },
+  {
+    "path": "docs/ui/03-cuidador.md",
+    "bytes": 13416,
+    "sha256": "C4439AE286A604F6BFC82AA78EE93D835E0C4E6FF1C466426F10E672645DE48A"
+  },
+  {
+    "path": "docs/ui/04-handoff.md",
+    "bytes": 6585,
+    "sha256": "1E694304BD48A34608F64C24C354D6EE5284E183D32F368E3F4364B17C83A338"
+  },
+  {
+    "path": "docs/ui/README.md",
+    "bytes": 3973,
+    "sha256": "5E1F776355084776F87073644B30231CAD9577C5DFA7A26D39FAAAA3F973F330"
+  },
+  {
+    "path": "README.md",
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  }
+]

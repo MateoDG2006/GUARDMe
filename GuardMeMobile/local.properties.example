@@ -1,0 +1,4 @@
+## Copiar a local.properties (Android Studio ya genera sdk.dir).
+sdk.dir=C\:\\Users\\YOU\\AppData\\Local\\Android\\Sdk
+## Emulador → host: 10.0.2.2. Teléfono físico → IP LAN del PC.
+guardme.api.base.url=http://10.0.2.2:3000

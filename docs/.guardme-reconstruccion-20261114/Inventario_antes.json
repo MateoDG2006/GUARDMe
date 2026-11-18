@@ -1,0 +1,362 @@
+[
+  {
+    "path": "Arduino/ESP32_main/ESP32_main.ino",
+    "bytes": 4852,
+    "sha256": "1A02A8B922759996B62452A2BEA169D8C58256898461B78CDB5F74FE8280CDCE"
+  },
+  {
+    "path": "docs/ui/01-fundamentos.md",
+    "bytes": 11949,
+    "sha256": "B0F3FB3D777934F85971391B12D8CD2DD502BA0ED4B36D3C6BD4D389032B1EC1"
+  },
+  {
+    "path": "docs/ui/02-persona.md",
+    "bytes": 16701,
+    "sha256": "3F6FC81302869384D1EDE1E7B8F16D66587E52355AA47C5DF5664DE6BB8F99D2"
+  },
+  {
+    "path": "docs/ui/03-cuidador.md",
+    "bytes": 13416,
+    "sha256": "C4439AE286A604F6BFC82AA78EE93D835E0C4E6FF1C466426F10E672645DE48A"
+  },
+  {
+    "path": "docs/ui/04-handoff.md",
+    "bytes": 6585,
+    "sha256": "1E694304BD48A34608F64C24C354D6EE5284E183D32F368E3F4364B17C83A338"
+  },
+  {
+    "path": "docs/ui/README.md",
+    "bytes": 3973,
+    "sha256": "5E1F776355084776F87073644B30231CAD9577C5DFA7A26D39FAAAA3F973F330"
+  },
+  {
+    "path": "GuardMeMobile/app/src/androidTest/java/com/example/guardmemobile/ExampleInstrumentedTest.kt",
+    "bytes": 677,
+    "sha256": "5B385EF94A1C6C016B9A11B043F256785BC325247AB5373860155E96FE6BF1F4"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/assets/licenses/OFL-Atkinson.txt",
+    "bytes": 4352,
+    "sha256": "F32D22B3908FCAD2C86A74000614EC22E6A7F66EA7E867E616026A27AEBDC143"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/assets/licenses/OFL-Figtree.txt",
+    "bytes": 4388,
+    "sha256": "140D37233E7F3CE7313798BEFA9600893BCCEAF41A55FA0FA5AD52F7F657A268"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/cuidador/CuidadorApp.kt",
+    "bytes": 6995,
+    "sha256": "FE32436A90D517412F0AF7B6139E5B999B9747C3EFF9BAD2EBBF83A1B6BDF4C3"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/cuidador/CuidadorScreens.kt",
+    "bytes": 50225,
+    "sha256": "84C6F994CF975F1BAA9480BB0503D799CE9D8F93EB50B2F1A2B0243BA834173F"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/cuidador/CuidadorState.kt",
+    "bytes": 10066,
+    "sha256": "D5FCE7B62A2BC1C2960B45ED9EB40D19618C74EC8EC2C2F4258B5090B94D792C"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/cuidador/CuidadorViewModel.kt",
+    "bytes": 7238,
+    "sha256": "7689F30B803983E67D6579680BC484A3C8298D2593DEDBA6CB5A7161C484317A"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/demo/DemoHub.kt",
+    "bytes": 282,
+    "sha256": "D23E5EBC7F94C5F868E3A97F07B4DF27EC6BD6E36CFC4BE7B9EA616C233973ED"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/persona/PersonaApp.kt",
+    "bytes": 5325,
+    "sha256": "6A6FD5BB6A043C8526CD1446D6A842C55CE6D42FB82EFF9A6AD029F44840E9C2"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/persona/PersonaOverlays.kt",
+    "bytes": 38574,
+    "sha256": "56DF9551FE81440D93671E94748B69ECFED8D0F54474F96C7ACE1BEC71C1E797"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/persona/PersonaScreens.kt",
+    "bytes": 29705,
+    "sha256": "F915816C61DA00A43F93E88C57B412C549AA43354F2BE356478322DB7BA5C3D6"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/persona/PersonaState.kt",
+    "bytes": 20677,
+    "sha256": "6A0272D2A23AF3E656D7A1AD18948295A03CE8C49E5011DBA9BDA6BE4D85426D"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/persona/PersonaViewModel.kt",
+    "bytes": 3426,
+    "sha256": "5123A992E9016F122A2EC739FD0F7AFF2A31F11E66D6366D7BFF2056084F424F"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/a11y/Motion.kt",
+    "bytes": 611,
+    "sha256": "D5BB998B00261353828F84B6632215CE6584ADE20EBA82827404882E4F1AE28B"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/components/GuardButtons.kt",
+    "bytes": 10348,
+    "sha256": "CFB962D39D9EA896665903D3AFC704FF82FC915C77F83F0A19246B31E0F042A4"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/components/GuardChrome.kt",
+    "bytes": 12102,
+    "sha256": "C1AC0CD1827218A43C4E311C3728907C1366989FC33B27A45C417CF2CB4BA85E"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/components/GuardIcons.kt",
+    "bytes": 11380,
+    "sha256": "664E0C378C4A06E17551D1F849286F6CF68DF22FD08480C434BC85DBC51A17EF"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/components/GuardSurfaces.kt",
+    "bytes": 11701,
+    "sha256": "8B29123CAACB12404D5383AC75182020A89BAD972449E839C0F70B8844F3ADD0"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/theme/Color.kt",
+    "bytes": 1550,
+    "sha256": "C300D1721C9BE4CB7ADC19C6573458AF72E07A3CC57299087BC52B34261EF9C8"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/theme/Theme.kt",
+    "bytes": 1056,
+    "sha256": "E45621B7513FD628BDA93FE4FB5490C315B7A662B491365326ABEFF187ED2304"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/ui/theme/Type.kt",
+    "bytes": 2554,
+    "sha256": "DA168702E75D132032FEA3E8A9C4F8BBCB8E7D2D5F531DEA571FB0459B1E42D7"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/GuardMeRoot.kt",
+    "bytes": 6896,
+    "sha256": "22099323C69B10073F7AAD42FE4C25D390DEDBB18376677D9C6A4FBC5E1E8312"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/java/com/example/guardmemobile/MainActivity.kt",
+    "bytes": 798,
+    "sha256": "F9F726CCC645431FD8990C2605C58314BDCAB04E6A5C0EEFD29E13C11D14F504"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/keepRules/rules.keep",
+    "bytes": 418,
+    "sha256": "CD9F36ADE2D8604E1B7CF24EFF5B171F9C0816C0AA013BA7EB55BE4FE2E1DAC7"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/drawable/ic_launcher_background.xml",
+    "bytes": 5606,
+    "sha256": "ED423C73A6F40A4D2909F0901E60527B3A807CD59E1B5593BCAAE1808B1C6321"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/drawable/ic_launcher_foreground.xml",
+    "bytes": 1702,
+    "sha256": "01D1A6A6C1234EB7FE270D097EB283D72B9C95AE5118886F1B6573AAD280F1F7"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/font/atkinson_bold.ttf",
+    "bytes": 38940,
+    "sha256": "F24C8E58E4CA1510660E1B4A3E499FFAC083BD111C382EBBD83CCD0F3067DC11"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/font/atkinson_regular.ttf",
+    "bytes": 38116,
+    "sha256": "1E169394EC03ADD35B28A9D3818B0745B09FCC1C817F43BE2636D00BFC40BE49"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/font/figtree_bold.ttf",
+    "bytes": 24764,
+    "sha256": "6008A00FE378E8203F3C59CB04F177211E0044B7D9DA14F50736C23601638FED"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/font/figtree_extrabold.ttf",
+    "bytes": 24728,
+    "sha256": "AF327376A4128666E978C660466B61E9924981B42355D6095563F3E433993013"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/font/figtree_regular.ttf",
+    "bytes": 24672,
+    "sha256": "BD63CAE00CE0F44A99DFDD28A143B34A92FD57D456D5276BC9E4532C5EC27D3F"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+    "bytes": 343,
+    "sha256": "88F7653499EF524126EA5018A99BAF9CC3269E7E584D6205DFDD76DB39F39CC0"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+    "bytes": 343,
+    "sha256": "88F7653499EF524126EA5018A99BAF9CC3269E7E584D6205DFDD76DB39F39CC0"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp",
+    "bytes": 2898,
+    "sha256": "1ED73F5341A69D3B41C7E02E126803F50CC8C3284ADF4BBB737F0C93577AEF07"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-hdpi/ic_launcher.webp",
+    "bytes": 1404,
+    "sha256": "DD00996198640ED28FBC09CDCD7A3807CF8707F3EB255B659634DA3CA6A6FF01"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp",
+    "bytes": 1772,
+    "sha256": "4E2C58B91DE01130E6479E00CBBAAF6E77CD961DD2C8E303CF13CD077FA92632"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-mdpi/ic_launcher.webp",
+    "bytes": 982,
+    "sha256": "846219E6F72FE9A6C104CA8919CBEE36A101E7D2FF8DA9DA67B689A5888F060D"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp",
+    "bytes": 3918,
+    "sha256": "91B490AEF86574901137F0A252272E1F1ADD99C1AD709E0696ED68929B88D261"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-xhdpi/ic_launcher.webp",
+    "bytes": 1900,
+    "sha256": "398340DAD816FC9A6338CB151A8CF1E45B926F9BFB70628B24C4BD2523CC94D4"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp",
+    "bytes": 5914,
+    "sha256": "3009FAD079F5772F30ECD767F98924367FBE0F81C30048D672D4FDA2D5CA7D12"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp",
+    "bytes": 2884,
+    "sha256": "58AE87FA0C5B5D1562D27FD648D2C061553FE20E3ED570BDE588162D01EA7A27"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp",
+    "bytes": 7778,
+    "sha256": "5FAF033745C8C882C43BB1B372D4E4A5890CAEC63D9892A2E756C954108B85DC"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp",
+    "bytes": 3844,
+    "sha256": "F98FEF5BC3BFE5B65692C40AD1CBAE2BEC4FAF9F1B249C397626740DB71B62D8"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/values/colors.xml",
+    "bytes": 231,
+    "sha256": "632094ABCF26289E5E13B7ED557B4EB4774B48D694A4B2F86A4371F22531DAC8"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/values/strings.xml",
+    "bytes": 20676,
+    "sha256": "8E7E4D50FCE5B615B741889F5E98C8A0240009EC3CDD278270226432BE867594"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/values/themes.xml",
+    "bytes": 492,
+    "sha256": "F132905AE922348EB90D4CF1D1C3621480D552B2D46A0D907467578A290BAC74"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/xml/backup_rules.xml",
+    "bytes": 478,
+    "sha256": "6CF1A27E6807B1D24E41D3FBE7DDC1BFE1F42226027964F6EAF477D71B43B283"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/res/xml/data_extraction_rules.xml",
+    "bytes": 551,
+    "sha256": "CB1FC47AB4A984530ED60E0E6EE638929C3038290E7E7E0B4B03A3A30FBE7381"
+  },
+  {
+    "path": "GuardMeMobile/app/src/main/AndroidManifest.xml",
+    "bytes": 1063,
+    "sha256": "9E2BE11E8A4C90A542A1946923FEEA557D5AF2D8D813F4C49E6F024339BC6D48"
+  },
+  {
+    "path": "GuardMeMobile/app/src/test/java/com/example/guardmemobile/persona/PersonaReducerTest.kt",
+    "bytes": 9002,
+    "sha256": "2AC902FE234B0B9F0032C273AA87CB5E214D4CB01C768BE4B8AF2F30D777E7B4"
+  },
+  {
+    "path": "GuardMeMobile/app/src/test/java/com/example/guardmemobile/ExampleUnitTest.kt",
+    "bytes": 349,
+    "sha256": "E2C3CE74586C17257E0885CE0BB60DD5B01EBBFFFD84C4E6309C02E2339AB1E2"
+  },
+  {
+    "path": "GuardMeMobile/app/.gitignore",
+    "bytes": 6,
+    "sha256": "5C3174B74EDC6F2B9E0743594B8BD3C7F31E4F4405758CC9872B3FE1DE1D28B4"
+  },
+  {
+    "path": "GuardMeMobile/app/build.gradle.kts",
+    "bytes": 1854,
+    "sha256": "C9CB0ABC2F13E75172C9038CFFDB5286947B9E3A64C0955F08DDECFDCCAD3A48"
+  },
+  {
+    "path": "GuardMeMobile/gradle/wrapper/gradle-wrapper.jar",
+    "bytes": 45457,
+    "sha256": "76805E32C009C0CF0DD5D206BDDC9FB22EA42E84DB904B764F3047DE095493F3"
+  },
+  {
+    "path": "GuardMeMobile/gradle/wrapper/gradle-wrapper.properties",
+    "bytes": 384,
+    "sha256": "26477389CF2A34A2CC189AF15CE405A6550DA0FBC2351716102B41C0868BBBE2"
+  },
+  {
+    "path": "GuardMeMobile/gradle/gradle-daemon-jvm.properties",
+    "bytes": 1138,
+    "sha256": "6C13AA5BA36690CCFBBB25A8807D01D98C15833E446D7AE82DDC726472CB8EF7"
+  },
+  {
+    "path": "GuardMeMobile/gradle/libs.versions.toml",
+    "bytes": 2219,
+    "sha256": "EE0E08BD3E862661C51D1AFF63AF21182DF8733EF5F95F915A1A8C22D49F29A8"
+  },
+  {
+    "path": "GuardMeMobile/.gitignore",
+    "bytes": 225,
+    "sha256": "703238443066325AF08E3868D1E4B571A633BAF68FCC93E323F0066999A97E1B"
+  },
+  {
+    "path": "GuardMeMobile/application.backup",
+    "bytes": 1908,
+    "sha256": "05092A322394136779DF28C279CE1FD16170F253C4BC88257B4A122F3A5B3998"
+  },
+  {
+    "path": "GuardMeMobile/build.gradle.kts",
+    "bytes": 218,
+    "sha256": "BE7DBFA1841B18B020F744E203B995D3DAC5709C2A6B8E310FBCFAED0364919A"
+  },
+  {
+    "path": "GuardMeMobile/gradle.properties",
+    "bytes": 1120,
+    "sha256": "CF774135F23CD1E6C054168CE772E24140800347F95B29819744C96F97E4EF26"
+  },
+  {
+    "path": "GuardMeMobile/gradlew",
+    "bytes": 8728,
+    "sha256": "3238AFB2AED5CB16EB7D6718077E7138059108F007B54179E9CC157C5A6E0E89"
+  },
+  {
+    "path": "GuardMeMobile/gradlew.bat",
+    "bytes": 2937,
+    "sha256": "1D297E00BD21DE3ACE22B4D7F2DE1F9DFA858883D66BBF7C1CCBECCCEC8F4F3B"
+  },
+  {
+    "path": "GuardMeMobile/local.properties",
+    "bytes": 449,
+    "sha256": "17286308B1F511E31FDBE39656F7AA46DE0418DF0711F0190169C255D9478F22"
+  },
+  {
+    "path": "GuardMeMobile/settings.gradle.kts",
+    "bytes": 624,
+    "sha256": "44E26D244B6F0A51F26A0696537CE7DB11991C85E0C9867CC3137C846D6D7AAE"
+  },
+  {
+    "path": "README.md",
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  }
+]

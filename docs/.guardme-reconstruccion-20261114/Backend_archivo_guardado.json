@@ -1,0 +1,22 @@
+{
+  "local_path": "D:\\PROYECTOS\\GUARDMe\\docs\\backend\\Propuesta_Backend_GUARDMe.md",
+  "operation": "create_library_file",
+  "status": "succeeded",
+  "path": "/GUARDMe/Propuesta_Backend_GUARDMe.md",
+  "file_id": "file_00000000b21c81f5a2519bf52f782255",
+  "library_file_id": "libfile_856c231c19bc819186a42b13a9a6c5c4",
+  "file_name": "Propuesta_Backend_GUARDMe.md",
+  "current_version_number": 0,
+  "restored_from_version_number": null,
+  "xattrs": [
+    {
+      "name": "user.library-file-version",
+      "value": "0"
+    }
+  ],
+  "directory_id": "6af898ab70888191bf7224b6b42cb714",
+  "mime_type": "text/markdown",
+  "library_artifact_type": "report",
+  "file_size_bytes": 47755,
+  "external_connectors_accessed": false
+}
