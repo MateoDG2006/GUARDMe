@@ -71,6 +71,7 @@ class CuidadorViewModel(
                     .getOrDefault(emptyList())
                 val canes = runCatching { container.api.listCanes(session.profileId) }
                     .getOrDefault(emptyList())
+                val cane = canes.firstOrNull()
                 val location = runCatching { container.api.getLocation(session.profileId) }.getOrNull()
                 zoneId = ZoneId.of(profile?.timeZone ?: "America/Panama")
                 val locationLabel = labelFor(location)
@@ -113,6 +114,9 @@ class CuidadorViewModel(
                         caneConnected = canes.any {
                             it.linkState == "gateway_set" || it.linkState == "connected"
                         },
+                        caneSerial = cane?.serial ?: "sin bastón",
+                        caneSensorStatus = cane?.telemetry?.sensorStatus ?: "unknown",
+                        caneLinkState = cane?.linkState ?: "linked_no_gateway",
                         locationLat = location?.takeIf { it.available }?.lat,
                         locationLng = location?.takeIf { it.available }?.lng,
                         locationLabel = locationLabel,
@@ -123,9 +127,15 @@ class CuidadorViewModel(
                             ?.capturedAt
                             ?.let { formatClock(it, zoneId) }
                             .orEmpty(),
-                        batteryPercent = 0,
-                        firmware = "sin datos",
-                        lastSignal = "sin datos",
+                        batteryPercent = cane?.telemetry?.batteryPct ?: 0,
+                        firmware = cane?.firmwareVersion?.takeIf { it.isNotBlank() } ?: "sin datos",
+                        lastSignal = cane?.telemetry?.ageSeconds?.let { age ->
+                            if (age < 60) "hace ${age}s" else "hace ${age / 60} min"
+                        } ?: cane?.linkState ?: "sin datos",
+                        reviewedAt = cane?.telemetry?.capturedAt
+                            ?.let { formatClock(it, zoneId) }
+                            ?.takeIf { it.isNotBlank() }
+                            ?: "—",
                         steps = 0,
                         kilometersLabel = "—",
                         pillsLabel = "—",
@@ -137,9 +147,11 @@ class CuidadorViewModel(
                         falseAlarms = 0,
                         weekKm = "—",
                         caneNotices = CaneNotices(
-                            lowBattery = false,
-                            offline = canes.isEmpty(),
-                            still = false,
+                            lowBattery = (cane?.telemetry?.batteryPct ?: 100) < 20,
+                            offline = cane == null ||
+                                cane.linkState == "linked_no_gateway" ||
+                                cane.linkState == "stale",
+                            still = cane?.telemetry?.sensorStatus == "fault",
                         ),
                     )
                 }

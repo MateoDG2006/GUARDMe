@@ -189,25 +189,42 @@ fun CuidadorHome(state: CuidadorState, viewModel: CuidadorViewModel) {
             Text("${reminder.time} · ${reminder.title}", color = GuardColor.Navy, style = Body)
         }
         GuardSectionTitle(stringResource(R.string.cane_of, state.firstName))
-            GuardCard {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                    Column {
-                        Text("${state.batteryPercent} %", color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp)
-                        Text(stringResource(if (state.caneConnected) R.string.connected else R.string.disconnected), color = if (state.caneConnected) GuardColor.Ok else GuardColor.Attention, style = Body)
-                    }
-                    BatteryChip(state.batteryPercent, stringResource(R.string.battery_cd, state.batteryPercent))
+        GuardCard {
+            Text(state.caneSerial, color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    Text(
+                        if (state.batteryPercent > 0) "${state.batteryPercent} %" else "—",
+                        color = GuardColor.Navy,
+                        fontFamily = Figtree,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 28.sp,
+                    )
+                    Text(
+                        stringResource(if (state.caneConnected) R.string.connected else R.string.disconnected),
+                        color = if (state.caneConnected) GuardColor.Ok else GuardColor.Attention,
+                        style = Body,
+                    )
+                    Text(
+                        when (state.caneSensorStatus) {
+                            "ok" -> stringResource(R.string.sensors_ok)
+                            "fault" -> stringResource(R.string.sensors_review)
+                            else -> stringResource(R.string.sensor_unknown)
+                        },
+                        color = if (state.caneSensorStatus == "fault") GuardColor.Attention else GuardColor.WarmGray,
+                        style = Caption,
+                    )
                 }
-                CaneToggle(stringResource(R.string.toggle_battery), state.caneNotices.lowBattery) { viewModel.toggleCane(CaneToggle.Battery) }
-                CaneToggle(stringResource(R.string.toggle_offline), state.caneNotices.offline) { viewModel.toggleCane(CaneToggle.Offline) }
-                CaneToggle(stringResource(R.string.toggle_still), state.caneNotices.still) { viewModel.toggleCane(CaneToggle.Still) }
-                GuardOutlineButton(
-                    text = stringResource(R.string.ring_cane),
-                    onClick = { viewModel.caneAction(CareToast.Ringing) },
-                    height = 52.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                )
+                BatteryChip(state.batteryPercent, stringResource(R.string.battery_cd, state.batteryPercent))
+            }
+            GuardOutlineButton(
+                text = stringResource(R.string.ring_cane),
+                onClick = { viewModel.caneAction(CareToast.Ringing) },
+                height = 52.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             GuardSectionTitle(stringResource(R.string.team_preview))
@@ -637,38 +654,57 @@ fun CuidadorNewReminder(state: CuidadorState, viewModel: CuidadorViewModel) {
 
 @Composable
 fun CuidadorCane(state: CuidadorState, viewModel: CuidadorViewModel) {
+    val sensorLabel = when (state.caneSensorStatus) {
+        "ok" -> stringResource(R.string.sensor_ok)
+        "fault" -> stringResource(R.string.sensor_fault)
+        else -> stringResource(R.string.sensor_unknown)
+    }
+    val sensorChip = when (state.caneSensorStatus) {
+        "ok" -> ChipKind.Taken
+        "fault" -> ChipKind.Pending
+        else -> ChipKind.Info
+    }
+    val linkLabel = when (state.caneLinkState) {
+        "connected" -> stringResource(R.string.connected)
+        "gateway_set" -> stringResource(R.string.link_gateway_set)
+        "stale" -> stringResource(R.string.link_stale)
+        else -> stringResource(R.string.link_no_gateway)
+    }
     CareScroll {
         GuardScreenTitle(stringResource(R.string.cane_of, state.firstName))
-        Text(stringResource(R.string.cane_identity), color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Text(state.caneSerial, color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         Text(stringResource(R.string.cane_firmware, state.firmware, state.firstName), color = GuardColor.WarmGray, style = Meta)
-        Text("${state.batteryPercent} %", color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.ExtraBold, fontSize = 48.sp)
-        Text(stringResource(R.string.days_left, 3), color = GuardColor.WarmGray, style = Body)
+        Text(
+            if (state.batteryPercent > 0) "${state.batteryPercent} %" else "—",
+            color = GuardColor.Navy,
+            fontFamily = Figtree,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 48.sp,
+        )
         GuardCard {
-            Fact(stringResource(R.string.row_connection), stringResource(if (state.caneConnected) R.string.connected else R.string.disconnected))
+            Fact(stringResource(R.string.row_connection), linkLabel)
             Fact(stringResource(R.string.last_signal), state.lastSignal)
-            Fact(stringResource(R.string.via_phone, state.firstName), stringResource(R.string.connected))
+            Fact(stringResource(R.string.via_phone, state.firstName), linkLabel)
         }
         GuardSectionTitle(stringResource(R.string.diagnosis))
         Text(stringResource(R.string.reviewed, state.reviewedAt), color = GuardColor.WarmGray, style = Meta)
         listOf(
-            "Acelerómetro" to "Detecta caídas y cuenta pasos",
-            "Giroscopio" to "Confirma el giro del cuerpo al caer",
-            "Botón de alerta" to "Última pulsación hoy",
-            "Buzzer y LED" to "Probado al buscar el bastón",
-            "Bluetooth" to "Señal fuerte (−58 dBm)",
+            stringResource(R.string.row_sensors) to stringResource(R.string.sensor_imu_detail),
+            stringResource(R.string.row_connection) to stringResource(R.string.sensor_ble_detail),
         ).forEach { (name, detail) ->
+            val chipKind = if (name == stringResource(R.string.row_sensors)) sensorChip else {
+                if (state.caneConnected) ChipKind.Taken else ChipKind.Pending
+            }
+            val chipText = if (name == stringResource(R.string.row_sensors)) sensorLabel else linkLabel
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(name, color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Text(detail, color = GuardColor.WarmGray, style = Caption)
                 }
-                GuardChip(stringResource(R.string.sensor_ok), ChipKind.Taken)
+                GuardChip(chipText, chipKind)
             }
         }
-        GuardOutlineButton(stringResource(R.string.test_sensors), { viewModel.caneAction(CareToast.Sensors) }, Modifier.fillMaxWidth(), height = 52.dp)
-        GuardToggleRow(stringResource(R.string.toggle_battery), state.caneNotices.lowBattery, { viewModel.toggleCane(CaneToggle.Battery) }, yesLabel = stringResource(R.string.yes), noLabel = stringResource(R.string.no))
-        GuardToggleRow(stringResource(R.string.toggle_offline), state.caneNotices.offline, { viewModel.toggleCane(CaneToggle.Offline) }, yesLabel = stringResource(R.string.yes), noLabel = stringResource(R.string.no))
-        GuardToggleRow(stringResource(R.string.toggle_still), state.caneNotices.still, { viewModel.toggleCane(CaneToggle.Still) }, yesLabel = stringResource(R.string.yes), noLabel = stringResource(R.string.no))
+        GuardOutlineButton(stringResource(R.string.test_sensors), { viewModel.refresh() }, Modifier.fillMaxWidth(), height = 52.dp)
         GuardPrimaryButton(stringResource(R.string.ring_cane), { viewModel.caneAction(CareToast.Ringing) }, Modifier.fillMaxWidth(), height = 56.dp, textStyle = ButtonCare)
     }
 }

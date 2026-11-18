@@ -30,6 +30,7 @@ sealed interface CaneBleEvent {
     ) : CaneBleEvent
     data class CmdApplied(val tipo: BleTipo) : CaneBleEvent
     data class CmdRejected(val tipo: BleTipo) : CaneBleEvent
+    data class StateUpdated(val state: CaneStateSnapshot) : CaneBleEvent
     data object Disconnected : CaneBleEvent
     data object Connected : CaneBleEvent
 }
@@ -277,7 +278,9 @@ class GuardMeGatt(private val context: Context) {
     }
 
     private fun parseStateBytes(value: ByteArray) {
-        lastState = GuardMeCodec.parseState(value)
+        val snapshot = GuardMeCodec.parseState(value) ?: return
+        lastState = snapshot
+        _events.tryEmit(CaneBleEvent.StateUpdated(snapshot))
     }
 
     private fun handleEvent(value: ByteArray) {

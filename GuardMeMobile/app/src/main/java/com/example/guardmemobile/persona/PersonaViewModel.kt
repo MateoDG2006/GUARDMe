@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.guardmemobile.AppContainer
 import com.example.guardmemobile.ble.CaneBleEvent
+import com.example.guardmemobile.ble.CaneStateSnapshot
 import com.example.guardmemobile.ble.GuardMeCodec
 import com.example.guardmemobile.data.api.ActivateIncidentBody
 import com.example.guardmemobile.data.api.ApiException
@@ -50,6 +51,7 @@ class PersonaViewModel(
     private var timerJob: Job? = null
     private var toastJob: Job? = null
     private var locationJob: Job? = null
+    private var telemetryJob: Job? = null
     private val occurrenceVersions = mutableMapOf<String, Int>()
     private var pendingCancel = false
     private var publishedExpireId: String? = null
@@ -59,6 +61,7 @@ class PersonaViewModel(
         refresh()
         observeBle()
         reconnectCane()
+        startTelemetryPublisher()
     }
 
     /** Llamar solo cuando Android ya concedió ubicación (o ya estaba concedida). */
@@ -115,13 +118,27 @@ class PersonaViewModel(
         viewModelScope.launch {
             container.gatt.eventsFlow.collect { event ->
                 when (event) {
-                    is CaneBleEvent.Connected ->
+                    is CaneBleEvent.Connected -> {
                         _state.update {
-                            it.copy(caneConnected = true, sensorsOk = true, lastUse = "ahora")
+                            it.copy(
+                                caneConnected = true,
+                                sensorsOk = sensorOkFromState(container.gatt.lastState),
+                                lastUse = "ahora",
+                            )
                         }
+                        ensureGateway()
+                    }
                     is CaneBleEvent.Disconnected ->
                         _state.update {
                             it.copy(caneConnected = false, sensorsOk = false, lastUse = "desconectado")
+                        }
+                    is CaneBleEvent.StateUpdated ->
+                        _state.update {
+                            it.copy(
+                                caneConnected = true,
+                                sensorsOk = sensorOkFromState(event.state),
+                                lastUse = "ahora",
+                            )
                         }
                     is CaneBleEvent.FallCandidate -> {
                         windowStartedAt = Instant.now()
@@ -189,7 +206,7 @@ class PersonaViewModel(
                 _state.update {
                     it.copy(
                         caneConnected = linked || it.caneConnected,
-                        sensorsOk = linked,
+                        sensorsOk = if (linked) sensorOkFromState(container.gatt.lastState) else false,
                     )
                 }
             }
@@ -202,6 +219,56 @@ class PersonaViewModel(
             runCatching { container.gatt.connect(address) }
         }
     }
+
+    private fun ensureGateway() {
+        viewModelScope.launch {
+            val caneId = container.auth.caneBackendId() ?: return@launch
+            runCatching { container.api.setGateway(caneId) }
+        }
+    }
+
+    private fun startTelemetryPublisher() {
+        if (telemetryJob?.isActive == true) return
+        telemetryJob = viewModelScope.launch {
+            while (isActive) {
+                publishTelemetry()
+                delay(20_000)
+            }
+        }
+    }
+
+    private suspend fun publishTelemetry() {
+        val caneId = container.auth.caneBackendId() ?: return
+        val linked = container.gatt.link.value
+        val state = container.gatt.lastState
+        val sensorStatus = when {
+            !linked -> "unknown"
+            state == null -> "unknown"
+            state.sensor == 1 -> "ok"
+            else -> "fault"
+        }
+        runCatching {
+            container.api.postGatewayEvents(
+                listOf(
+                    GatewayEventBody(
+                        eventId = "tel:${UUID.randomUUID()}",
+                        type = "telemetry_observed",
+                        caneId = caneId,
+                        occurredAt = Instant.now().toString(),
+                        payload = GatewayEventPayload(
+                            capturedAt = Instant.now().toString(),
+                            sensorStatus = sensorStatus,
+                            linkStatus = if (linked) "connected" else "disconnected",
+                            firmwareVersion = "0.2.0",
+                        ),
+                    ),
+                ),
+            )
+        }
+    }
+
+    private fun sensorOkFromState(state: CaneStateSnapshot?): Boolean =
+        state?.sensor == 1
 
     private fun findCaneRemote() {
         val before = _state.value
@@ -394,7 +461,7 @@ class PersonaViewModel(
                         kilometersLabel = "—",
                         calories = 0,
                         caneConnected = linked,
-                        sensorsOk = container.gatt.link.value,
+                        sensorsOk = sensorOkFromState(container.gatt.lastState),
                         lastUse = if (linked) "vinculado" else "sin datos",
                         tomorrowTime = occurrences
                             .map { Instant.parse(it.scheduledFor).atZone(zone).toLocalTime() }
@@ -587,6 +654,7 @@ class PersonaViewModel(
 
     override fun onCleared() {
         locationJob?.cancel()
+        telemetryJob?.cancel()
         super.onCleared()
     }
 

@@ -73,6 +73,8 @@ data class GatewayEventPayload(
     val cancelledVia: String? = null,
     val capturedAt: String? = null,
     val batteryPct: Int? = null,
+    val charging: Boolean? = null,
+    val sensorStatus: String? = null,
     val linkStatus: String? = null,
     val firmwareVersion: String? = null,
 )
@@ -335,12 +337,34 @@ data class ClaimCaneBody(
 )
 
 @Serializable
+data class CaneTelemetryView(
+    val batteryPct: Int? = null,
+    val charging: Boolean? = null,
+    val sensorStatus: String? = null,
+    val linkStatus: String? = null,
+    val capturedAt: String? = null,
+    val ageSeconds: Int? = null,
+)
+
+@Serializable
+data class CaneGatewayView(
+    val installationId: String? = null,
+    val isThisInstallation: Boolean? = null,
+    val startedAt: String? = null,
+    val lastEventAt: String? = null,
+)
+
+@Serializable
 data class CaneView(
     val id: String,
     val serial: String? = null,
     val model: String? = null,
     val status: String? = null,
+    val firmwareVersion: String? = null,
     val linkState: String? = null,
+    val gateway: CaneGatewayView? = null,
+    val telemetry: CaneTelemetryView? = null,
+    val gatewayLastEventAgeSeconds: Int? = null,
 )
 
 @Serializable

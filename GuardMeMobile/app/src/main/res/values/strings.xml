@@ -307,6 +307,13 @@
     <string name="test_sensors">Probar sensores ahora</string>
     <string name="toast_sensors">Sensores revisados. Todo responde.</string>
     <string name="sensor_ok">OK</string>
+    <string name="sensor_fault">Fallo</string>
+    <string name="sensor_unknown">Sin dato</string>
+    <string name="sensor_imu_detail">Acelerómetro / giroscopio del bastón</string>
+    <string name="sensor_ble_detail">Enlace del bastón con el celular de la persona</string>
+    <string name="link_gateway_set">Gateway activo</string>
+    <string name="link_stale">Señal antigua</string>
+    <string name="link_no_gateway">Sin gateway</string>
 
     <string name="team_title">Equipo de cuidado</string>
     <string name="cared_label">Persona cuidada</string>
