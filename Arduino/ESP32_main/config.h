@@ -1,10 +1,14 @@
 #pragma once
 #include <stdint.h>
 
-static const int PIN_SDA = 21;
-static const int PIN_SCL = 22;
-static const int PIN_BOTON = 4;
-static const int PIN_BUZZER = 5;
+// Esquema GUARDMe ESP32 DevKit 30 pines
+static const int PIN_SDA = 21;       // MPU6050 SDA
+static const int PIN_SCL = 22;       // MPU6050 SCL
+static const int PIN_BOTON = 4;      // SOS a GND, INPUT_PULLUP (activo en LOW)
+static const int PIN_BUZZER = 18;    // buzzer pasivo + ; - a GND
+static const int PIN_LED_R = 23;     // RGB ánodo común (activo en LOW)
+static const int PIN_LED_G = 19;
+static const int PIN_LED_B = 15;
 
 static const float UMBRAL_GOLPE = 100.0f;
 static const uint32_t MUESTRA_MS = 10;

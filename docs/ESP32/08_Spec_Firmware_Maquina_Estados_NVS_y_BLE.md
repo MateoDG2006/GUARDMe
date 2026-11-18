@@ -33,7 +33,7 @@ La cadena Android → NestJS queda fuera de este trabajo. El firmware no abre Wi
 | Tema | Valor fijado aquí | Qué no cierra |
 |---|---|---|
 | Placa | ESP32 clásico, FQBN `esp32:esp32:esp32` | El circuito del buzzer y del botón sigue sin esquema eléctrico |
-| Pines | SDA 21, SCL 22, botón 4, buzzer 5 | GPIO 6 y GPIO 7 prohibidos: en este chip van al flash |
+| Pines | SDA 21, SCL 22, botón 4 (PULLUP), buzzer 18, LED R23/G19/B15 | GPIO 6 y GPIO 7 prohibidos: en este chip van al flash |
 | Detector | Fórmula, umbral `100.0`, ±8 g, filtro 94 Hz, muestra cada 10 ms | Calibración con caídas reales |
 | Ventana | 30 000 ms desde el candidato aceptado en este arranque | Política remota PD-12 |
 | Aire | Binario little-endian, protocolo mayor 0 menor 2 | Medición de MTU, consumo y alcance |
@@ -69,7 +69,10 @@ No crear módulos de Android, NestJS, LED, batería ni Wi-Fi.
 static const int PIN_SDA = 21;
 static const int PIN_SCL = 22;
 static const int PIN_BOTON = 4;    // INPUT_PULLDOWN, activo en HIGH
-static const int PIN_BUZZER = 5;   // OUTPUT, activo en HIGH
+static const int PIN_BUZZER = 18;  // OUTPUT, activo en HIGH (esquema GUARDMe)
+static const int PIN_LED_R = 23;   // RGB ánodo común, activo en LOW
+static const int PIN_LED_G = 19;
+static const int PIN_LED_B = 15;
 
 static const float UMBRAL_GOLPE = 100.0f;
 static const uint32_t MUESTRA_MS = 10;

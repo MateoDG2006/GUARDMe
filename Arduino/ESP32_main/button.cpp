@@ -4,7 +4,8 @@
 
 void ButtonInput::begin(int pin) {
   pin_ = pin;
-  pinMode(pin_, INPUT_PULLDOWN);
+  // Esquema: un lado GPIO 4, otro GND → PULLUP, pulsado = LOW.
+  pinMode(pin_, INPUT_PULLUP);
 }
 
 void ButtonInput::armForCancel() {
@@ -17,11 +18,11 @@ void ButtonInput::armForCancel() {
 }
 
 Gesto ButtonInput::tick(uint32_t now_ms) {
-  bool high = digitalRead(pin_) == HIGH;
+  bool pressed = digitalRead(pin_) == LOW;
   Gesto gesto = Gesto::Ninguno;
 
   if (armado_cancel_) {
-    if (high) {
+    if (pressed) {
       if (!contando_pulso_) {
         inicio_pulso_ = now_ms;
         contando_pulso_ = 1;
@@ -49,7 +50,7 @@ Gesto ButtonInput::tick(uint32_t now_ms) {
       }
     }
   } else if (en_rearme_) {
-    if (high) {
+    if (pressed) {
       inicio_rearme_ = now_ms;
     } else if (now_ms - inicio_rearme_ >= REARME_MS) {
       rearme_ok_ = 1;
@@ -58,7 +59,7 @@ Gesto ButtonInput::tick(uint32_t now_ms) {
   }
 
   if (!armado_cancel_ && !esperando_suelta_ && !en_rearme_) {
-    if (high) {
+    if (pressed) {
       if (!inicio_atasco_) inicio_atasco_ = now_ms;
       if (!atascado_ && now_ms - inicio_atasco_ >= ATASCO_MS) {
         atascado_ = 1;

@@ -5,12 +5,15 @@ enum class Sonido : uint8_t { Off = 0, Alarma = 1, Recordatorio = 2, Fallo = 3 }
 
 class Signals {
  public:
-  void begin(int pin);
+  void begin(int pin_buzzer);
   void set(Sonido sonido);
   void tick(uint32_t now_ms);
   void startReminder(uint32_t duration_ms, uint8_t pattern_id);
 
  private:
+  void ledOff();
+  void ledRgb(uint8_t r_on, uint8_t g_on, uint8_t b_on);
+
   int pin_ = -1;
   Sonido modo_ = Sonido::Off;
   uint32_t t0_ = 0;
