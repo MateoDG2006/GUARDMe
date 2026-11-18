@@ -31,14 +31,31 @@ enum class CareCall { Emergency, Person }
 enum class AttentionOutcome { Open, ReceivedAssistance }
 
 sealed interface CareToast {
-    data object RoutePending : CareToast
     data object Ringing : CareToast
     data object Sensors : CareToast
     data object Preferences : CareToast
     data object ReminderSaved : CareToast
     data object InviteSent : CareToast
+    data object ProfileSaved : CareToast
     data class Error(val message: String) : CareToast
 }
+
+data class ProfileDraft(
+    val fullName: String = "",
+    val age: String = "",
+    val height: String = "",
+    val weight: String = "",
+    val conditions: String = "",
+    val allergies: String = "",
+    val blood: String = "",
+    val address: String = "",
+    val phone: String = "",
+    val doctor: String = "",
+    val insurance: String = "",
+    val version: Int = 1,
+    val timeZone: String = "America/Panama",
+    val showError: Boolean = false,
+)
 
 data class Notice(
     val id: String,
@@ -130,6 +147,8 @@ data class Profile(
     val phone: String = "sin datos",
     val doctor: String = "sin datos",
     val insurance: String = "sin datos",
+    val version: Int = 1,
+    val timeZone: String = "America/Panama",
 )
 
 data class CuidadorState(
@@ -165,6 +184,7 @@ data class CuidadorState(
     val draft: ReminderDraft,
     val members: List<Member>,
     val invite: InviteDraft,
+    val profileDraft: ProfileDraft = ProfileDraft(),
     val call: CareCall?,
     val toast: CareToast?,
     val attention: AttentionOutcome = AttentionOutcome.Open,

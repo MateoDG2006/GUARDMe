@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -139,7 +140,7 @@ fun CuidadorHome(state: CuidadorState, viewModel: CuidadorViewModel) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                     )
-                    Text("Calle 50, San Francisco", color = GuardColor.WarmGray, style = Meta)
+                    Text(state.locationLabel, color = GuardColor.WarmGray, style = Meta)
                     Text(
                         stringResource(R.string.live_link),
                         color = GuardColor.BrownDark,
@@ -271,7 +272,7 @@ fun CuidadorAlert(state: CuidadorState, viewModel: CuidadorViewModel) {
                 color = GuardColor.WarmGray,
                 style = Meta,
             )
-            GuardOutlineButton(stringResource(R.string.how_to_get), { viewModel.show(CareToast.RoutePending) }, Modifier.fillMaxWidth(), height = 48.dp)
+            GuardOutlineButton(stringResource(R.string.how_to_get), viewModel::openDirections, Modifier.fillMaxWidth(), height = 48.dp)
             if (auto) {
                 GuardCard(container = GuardColor.Sand, bordered = false) {
                     Text(stringResource(R.string.auto_status), color = GuardColor.Emergency, fontFamily = Figtree, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
@@ -358,7 +359,7 @@ fun CuidadorLive(state: CuidadorState, viewModel: CuidadorViewModel) {
             MetricCell(accuracyLabel, stringResource(R.string.accuracy_label), Modifier.weight(1f))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            GuardOutlineButton(stringResource(R.string.how_to_get), { viewModel.show(CareToast.RoutePending) }, Modifier.weight(1f), height = 52.dp)
+            GuardOutlineButton(stringResource(R.string.how_to_get), viewModel::openDirections, Modifier.weight(1f), height = 52.dp)
             GuardPrimaryButton(stringResource(R.string.call_name, state.firstName), { viewModel.startCall(CareCall.Person) }, Modifier.weight(1f), height = 52.dp, textStyle = ButtonCare)
         }
         // shortcut: backend only stores latest point, not a trail; replace when location history exists
@@ -731,28 +732,96 @@ fun CuidadorInvite(state: CuidadorState, viewModel: CuidadorViewModel) {
 
 @Composable
 fun CuidadorProfile(state: CuidadorState, viewModel: CuidadorViewModel) {
-    val profile = state.profile
+    val draft = state.profileDraft
     CarePage(stringResource(R.string.profile_title, state.firstName), viewModel::back) {
-        Text(stringResource(R.string.profile_readonly), color = GuardColor.WarmGray, style = Meta)
+        Text(stringResource(R.string.profile_edit_hint), color = GuardColor.WarmGray, style = Meta)
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            GuardAvatar("R", AvatarKind.Warm, size = 88.dp)
-            Text(profile.fullName, color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+            GuardAvatar(
+                draft.fullName.take(1).ifBlank { "R" }.uppercase(),
+                AvatarKind.Warm,
+                size = 88.dp,
+            )
         }
         GuardSectionTitle(stringResource(R.string.section_identity))
-        Fact(stringResource(R.string.label_age), stringResource(R.string.years, profile.age))
-        Fact(stringResource(R.string.label_height), profile.height)
-        Fact(stringResource(R.string.label_weight), profile.weight)
+        GuardTextField(
+            stringResource(R.string.field_name),
+            draft.fullName,
+            { viewModel.updateProfileDraft(draft.copy(fullName = it)) },
+            error = if (draft.showError && draft.fullName.isBlank()) {
+                stringResource(R.string.profile_need_name)
+            } else {
+                null
+            },
+        )
+        GuardTextField(
+            stringResource(R.string.label_age),
+            draft.age,
+            { viewModel.updateProfileDraft(draft.copy(age = it.filter { ch -> ch.isDigit() }.take(3))) },
+            keyboardType = KeyboardType.Number,
+            error = if (draft.showError && draft.age.isNotBlank() && draft.age.toIntOrNull() == null) {
+                stringResource(R.string.profile_need_age)
+            } else {
+                null
+            },
+        )
+        GuardTextField(
+            stringResource(R.string.label_height),
+            draft.height,
+            { viewModel.updateProfileDraft(draft.copy(height = it)) },
+        )
+        GuardTextField(
+            stringResource(R.string.label_weight),
+            draft.weight,
+            { viewModel.updateProfileDraft(draft.copy(weight = it)) },
+        )
         GuardSectionTitle(stringResource(R.string.section_health))
-        Fact(stringResource(R.string.label_conditions), profile.conditions)
-        Fact(stringResource(R.string.label_allergies), profile.allergies)
-        Fact(stringResource(R.string.label_blood), profile.blood)
+        GuardTextField(
+            stringResource(R.string.label_conditions),
+            draft.conditions,
+            { viewModel.updateProfileDraft(draft.copy(conditions = it)) },
+        )
+        GuardTextField(
+            stringResource(R.string.label_allergies),
+            draft.allergies,
+            { viewModel.updateProfileDraft(draft.copy(allergies = it)) },
+        )
+        GuardTextField(
+            stringResource(R.string.label_blood),
+            draft.blood,
+            { viewModel.updateProfileDraft(draft.copy(blood = it)) },
+        )
         GuardSectionTitle(stringResource(R.string.section_meds))
-        Text(profile.meds, color = GuardColor.Navy, style = Body)
+        Text(state.profile.meds, color = GuardColor.Navy, style = Body)
+        Text(stringResource(R.string.profile_meds_hint), color = GuardColor.WarmGray, style = Caption)
         GuardSectionTitle(stringResource(R.string.section_contact))
-        Fact(stringResource(R.string.label_address), profile.address)
-        Fact(stringResource(R.string.field_phone), profile.phone)
-        Fact(stringResource(R.string.label_doctor), profile.doctor)
-        Fact(stringResource(R.string.label_insurance), profile.insurance)
+        GuardTextField(
+            stringResource(R.string.label_address),
+            draft.address,
+            { viewModel.updateProfileDraft(draft.copy(address = it)) },
+        )
+        GuardTextField(
+            stringResource(R.string.field_phone),
+            draft.phone,
+            { viewModel.updateProfileDraft(draft.copy(phone = it)) },
+            keyboardType = KeyboardType.Phone,
+        )
+        GuardTextField(
+            stringResource(R.string.label_doctor),
+            draft.doctor,
+            { viewModel.updateProfileDraft(draft.copy(doctor = it)) },
+        )
+        GuardTextField(
+            stringResource(R.string.label_insurance),
+            draft.insurance,
+            { viewModel.updateProfileDraft(draft.copy(insurance = it)) },
+        )
+        GuardPrimaryButton(
+            stringResource(R.string.save_profile),
+            viewModel::saveProfile,
+            Modifier.fillMaxWidth(),
+            height = 56.dp,
+            textStyle = ButtonCare,
+        )
     }
 }
 

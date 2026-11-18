@@ -65,6 +65,13 @@ class GuardMeApiClient(
     suspend fun getProfile(profileId: String): ProfileView =
         get("/v1/profiles/$profileId")
 
+    suspend fun updateProfile(profileId: String, body: UpdateProfileBody): ProfileView =
+        exchange(
+            method = "PATCH",
+            path = "/v1/profiles/$profileId",
+            bodyJson = json.encodeToString(body),
+        )
+
     suspend fun listContacts(profileId: String): ContactListView =
         get("/v1/profiles/$profileId/contacts")
 

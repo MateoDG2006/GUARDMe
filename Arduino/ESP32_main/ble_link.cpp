@@ -30,9 +30,10 @@ class ServerCallbacks : public BLEServerCallbacks {
 
 class CommandCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic* c) override {
-    std::string v = c->getValue();
-    if (g_ble && !v.empty()) {
-      g_ble->onWrite((const uint8_t*)v.data(), v.size());
+    // NimBLE/Arduino-ESP32: getValue() returns Arduino String, not std::string.
+    String v = c->getValue();
+    if (g_ble && v.length() > 0) {
+      g_ble->onWrite((const uint8_t*)v.c_str(), (size_t)v.length());
     }
   }
 };
@@ -47,7 +48,7 @@ void GuardMeBle::begin(RecordStore& store) {
   store_ = &store;
   g_ble = this;
   BLEDevice::init(BLE_NAME);
-  BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
+  // setEncryptionLevel() no existe en este stack BLE; bonding + PERM_*_ENCRYPTED bastan.
   BLESecurity* sec = new BLESecurity();
   sec->setAuthenticationMode(ESP_LE_AUTH_BOND);
   sec->setCapability(ESP_IO_CAP_NONE);

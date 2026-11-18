@@ -215,7 +215,8 @@
     <string name="alert_sub">%1$s · No tocó «Estoy bien» en 30 s</string>
     <string name="alert_auto_sub">%1$s no contestó en 2 intentos</string>
     <string name="how_to_get">Cómo llegar</string>
-    <string name="route_pending">El mapa para llegar se conectará más adelante. La dirección está escrita debajo del mapa.</string>
+    <string name="err_no_location">Todavía no hay ubicación para abrir en Maps.</string>
+    <string name="err_maps_unavailable">No se pudo abrir Google Maps.</string>
     <string name="ring_their">Hacer sonar su bastón</string>
     <string name="toast_ring">El bastón está sonando.</string>
     <string name="coord_waiting">%1$s también recibió la alerta y aún no responde.</string>
@@ -337,6 +338,12 @@
 
     <string name="profile_title">Ficha de %1$s</string>
     <string name="profile_readonly">Solo lectura. La edición de la ficha todavía no está definida.</string>
+    <string name="profile_edit_hint">Completa los datos de la persona asistida. Se guardan en el servidor.</string>
+    <string name="profile_need_name">Escribe el nombre completo.</string>
+    <string name="profile_need_age">La edad debe ser un número.</string>
+    <string name="profile_meds_hint">Los medicamentos salen de los recordatorios configurados.</string>
+    <string name="save_profile">Guardar ficha</string>
+    <string name="toast_profile_saved">Ficha guardada</string>
     <string name="section_identity">Identidad</string>
     <string name="section_health">Salud</string>
     <string name="section_meds">Medicamentos</string>

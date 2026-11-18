@@ -178,6 +178,35 @@ data class ProfileView(
     val id: String,
     val displayName: String,
     val timeZone: String? = null,
+    val status: String? = null,
+    val version: Int = 1,
+    val ageYears: Int? = null,
+    val height: String? = null,
+    val weight: String? = null,
+    val conditions: String? = null,
+    val allergies: String? = null,
+    val bloodType: String? = null,
+    val address: String? = null,
+    val phone: String? = null,
+    val doctor: String? = null,
+    val insurance: String? = null,
+)
+
+@Serializable
+data class UpdateProfileBody(
+    val expectedVersion: Int,
+    val displayName: String? = null,
+    val timeZone: String? = null,
+    val ageYears: Int? = null,
+    val height: String? = null,
+    val weight: String? = null,
+    val conditions: String? = null,
+    val allergies: String? = null,
+    val bloodType: String? = null,
+    val address: String? = null,
+    val phone: String? = null,
+    val doctor: String? = null,
+    val insurance: String? = null,
 )
 
 @Serializable

@@ -152,11 +152,11 @@ private fun CareCallOverlay(state: CuidadorState, viewModel: CuidadorViewModel) 
 @Composable
 private fun careToast(toast: CareToast?): String? = when (toast) {
     null -> null
-    CareToast.RoutePending -> stringResource(R.string.route_pending)
     CareToast.Ringing -> stringResource(R.string.toast_ring)
     CareToast.Sensors -> stringResource(R.string.toast_sensors)
     CareToast.Preferences -> stringResource(R.string.prefs_pending)
     CareToast.ReminderSaved -> stringResource(R.string.toast_reminder)
     CareToast.InviteSent -> stringResource(R.string.toast_invite)
+    CareToast.ProfileSaved -> stringResource(R.string.toast_profile_saved)
     is CareToast.Error -> toast.message
 }

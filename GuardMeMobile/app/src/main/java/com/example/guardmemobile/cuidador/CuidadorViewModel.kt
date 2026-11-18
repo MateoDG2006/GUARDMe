@@ -9,12 +9,18 @@ import com.example.guardmemobile.data.api.userMessage
 import com.example.guardmemobile.R
 import com.example.guardmemobile.data.api.CreateReminderBody
 import com.example.guardmemobile.data.api.CreateScheduleBody
+import com.example.guardmemobile.data.api.LocationView
 import com.example.guardmemobile.data.api.MemberView
 import com.example.guardmemobile.data.api.NotificationView
+import com.example.guardmemobile.data.api.ProfileView
 import com.example.guardmemobile.data.api.ReminderView
+import com.example.guardmemobile.data.api.UpdateProfileBody
 import com.example.guardmemobile.persona.AvatarKind
 import com.example.guardmemobile.platform.Dialer
+import com.example.guardmemobile.platform.MapsDirections
+import com.example.guardmemobile.platform.PlaceNames
 import com.example.guardmemobile.session.ActiveSession
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +29,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -66,26 +73,20 @@ class CuidadorViewModel(
                     .getOrDefault(emptyList())
                 val location = runCatching { container.api.getLocation(session.profileId) }.getOrNull()
                 zoneId = ZoneId.of(profile?.timeZone ?: "America/Panama")
+                val locationLabel = labelFor(location)
+                val mappedProfile = mapProfile(
+                    profile,
+                    session.profileName,
+                    reminders.joinToString(" · ") { it.title },
+                    members.firstOrNull { it.caregiverCategory == "medical" }?.displayName,
+                )
                 _state.update { state ->
                     state.copy(
-                        firstName = (profile?.displayName ?: session.profileName)
+                        firstName = mappedProfile.fullName
                             .substringBefore(' ')
                             .ifBlank { session.displayName },
-                        profile = Profile(
-                            fullName = profile?.displayName ?: session.profileName,
-                            age = 0,
-                            height = "sin datos",
-                            weight = "sin datos",
-                            conditions = "sin datos",
-                            allergies = "sin datos",
-                            blood = "sin datos",
-                            meds = reminders.joinToString(" · ") { it.title }.ifBlank { "sin datos" },
-                            address = "sin datos",
-                            phone = "sin datos",
-                            doctor = members.firstOrNull { it.caregiverCategory == "medical" }?.displayName
-                                ?: "sin datos",
-                            insurance = "sin datos",
-                        ),
+                        profile = mappedProfile,
+                        profileDraft = draftFrom(mappedProfile),
                         reminders = reminders.flatMap(::mapReminder),
                         meds = reminders
                             .filter { it.kind == "medication" }
@@ -114,16 +115,7 @@ class CuidadorViewModel(
                         },
                         locationLat = location?.takeIf { it.available }?.lat,
                         locationLng = location?.takeIf { it.available }?.lng,
-                        locationLabel = when {
-                            location?.available == true && location.lat != null && location.lng != null ->
-                                "%.5f, %.5f · ±%.0fm".format(
-                                    location.lat,
-                                    location.lng,
-                                    location.accuracyM ?: 0.0,
-                                )
-                            location?.reason == "not_enabled" -> "Ubicación deshabilitada"
-                            else -> "Sin ubicación"
-                        },
+                        locationLabel = locationLabel,
                         locationAgeSeconds = location?.takeIf { it.available }?.ageSeconds,
                         locationAccuracyM = location?.takeIf { it.available }?.accuracyM,
                         locationTimeLabel = location
@@ -162,27 +154,78 @@ class CuidadorViewModel(
     }
 
     fun open(screen: CareScreen) {
-        _state.update { it.copy(stack = it.stack + screen) }
+        _state.update { state ->
+            val next = state.copy(stack = state.stack + screen)
+            if (screen is CareScreen.Profile) next.copy(profileDraft = draftFrom(state.profile))
+            else next
+        }
         if (screen is CareScreen.Live) refreshLocation()
+    }
+
+    fun updateProfileDraft(draft: ProfileDraft) {
+        _state.update { it.copy(profileDraft = draft.copy(showError = false)) }
+    }
+
+    fun saveProfile() {
+        val draft = _state.value.profileDraft
+        if (draft.fullName.isBlank()) {
+            _state.update { it.copy(profileDraft = draft.copy(showError = true)) }
+            return
+        }
+        val age = draft.age.trim().takeIf { it.isNotEmpty() }?.toIntOrNull()
+        if (draft.age.isNotBlank() && age == null) {
+            _state.update { it.copy(profileDraft = draft.copy(showError = true)) }
+            return
+        }
+        viewModelScope.launch {
+            try {
+                val updated = container.api.updateProfile(
+                    session.profileId,
+                    UpdateProfileBody(
+                        expectedVersion = draft.version,
+                        displayName = draft.fullName.trim(),
+                        timeZone = draft.timeZone,
+                        ageYears = age,
+                        height = draft.height.trim().ifBlank { null },
+                        weight = draft.weight.trim().ifBlank { null },
+                        conditions = draft.conditions.trim().ifBlank { null },
+                        allergies = draft.allergies.trim().ifBlank { null },
+                        bloodType = draft.blood.trim().ifBlank { null },
+                        address = draft.address.trim().ifBlank { null },
+                        phone = draft.phone.trim().ifBlank { null },
+                        doctor = draft.doctor.trim().ifBlank { null },
+                        insurance = draft.insurance.trim().ifBlank { null },
+                    ),
+                )
+                val mapped = mapProfile(
+                    updated,
+                    session.profileName,
+                    _state.value.profile.meds.takeIf { it != "sin datos" }.orEmpty(),
+                    null,
+                )
+                _state.update {
+                    it.copy(
+                        firstName = mapped.fullName.substringBefore(' ').ifBlank { it.firstName },
+                        profile = mapped.copy(meds = it.profile.meds, doctor = mapped.doctor),
+                        profileDraft = draftFrom(mapped.copy(meds = it.profile.meds)),
+                    )
+                }
+                show(CareToast.ProfileSaved)
+            } catch (error: Exception) {
+                fail(error)
+            }
+        }
     }
 
     fun refreshLocation() {
         viewModelScope.launch {
             val location = runCatching { container.api.getLocation(session.profileId) }.getOrNull()
+            val label = labelFor(location)
             _state.update { state ->
                 state.copy(
                     locationLat = location?.takeIf { it.available }?.lat,
                     locationLng = location?.takeIf { it.available }?.lng,
-                    locationLabel = when {
-                        location?.available == true && location.lat != null && location.lng != null ->
-                            "%.5f, %.5f · ±%.0fm".format(
-                                location.lat,
-                                location.lng,
-                                location.accuracyM ?: 0.0,
-                            )
-                        location?.reason == "not_enabled" -> "Ubicación deshabilitada"
-                        else -> "Sin ubicación"
-                    },
+                    locationLabel = label,
                     locationAgeSeconds = location?.takeIf { it.available }?.ageSeconds,
                     locationAccuracyM = location?.takeIf { it.available }?.accuracyM,
                     locationTimeLabel = location
@@ -383,6 +426,25 @@ class CuidadorViewModel(
     }
 
     /** Acciones que necesitan el bastón: si no está conectado, pedir ese paso primero. */
+    fun openDirections() {
+        val state = _state.value
+        val lat = state.locationLat
+        val lng = state.locationLng
+        if (lat == null || lng == null) {
+            show(CareToast.Error(container.appContext.getString(R.string.err_no_location)))
+            return
+        }
+        val opened = MapsDirections.open(
+            container.appContext,
+            lat,
+            lng,
+            state.locationLabel,
+        )
+        if (!opened) {
+            show(CareToast.Error(container.appContext.getString(R.string.err_maps_unavailable)))
+        }
+    }
+
     fun caneAction(toast: CareToast) {
         if (_state.value.caneConnected) show(toast)
         else show(CareToast.Error(container.appContext.getString(R.string.err_cane_not_connected)))
@@ -458,6 +520,56 @@ class CuidadorViewModel(
             Instant.parse(iso).atZone(zone).toLocalTime()
                 .format(DateTimeFormatter.ofPattern("HH:mm"))
         }.getOrDefault("")
+
+    private suspend fun labelFor(location: LocationView?): String = when {
+        location?.available == true && location.lat != null && location.lng != null ->
+            withContext(Dispatchers.IO) {
+                PlaceNames.fromLatLng(container.appContext, location.lat, location.lng)
+            }
+        location?.reason == "not_enabled" -> "Ubicación deshabilitada"
+        else -> "Sin ubicación"
+    }
+
+    private fun mapProfile(
+        profile: ProfileView?,
+        fallbackName: String,
+        meds: String,
+        doctorFallback: String?,
+    ): Profile {
+        fun text(value: String?): String = value?.takeIf { it.isNotBlank() } ?: "sin datos"
+        return Profile(
+            fullName = profile?.displayName?.takeIf { it.isNotBlank() } ?: fallbackName,
+            age = profile?.ageYears ?: 0,
+            height = text(profile?.height),
+            weight = text(profile?.weight),
+            conditions = text(profile?.conditions),
+            allergies = text(profile?.allergies),
+            blood = text(profile?.bloodType),
+            meds = meds.ifBlank { "sin datos" },
+            address = text(profile?.address),
+            phone = text(profile?.phone),
+            doctor = text(profile?.doctor ?: doctorFallback),
+            insurance = text(profile?.insurance),
+            version = profile?.version ?: 1,
+            timeZone = profile?.timeZone ?: "America/Panama",
+        )
+    }
+
+    private fun draftFrom(profile: Profile): ProfileDraft = ProfileDraft(
+        fullName = profile.fullName,
+        age = if (profile.age > 0) profile.age.toString() else "",
+        height = profile.height.takeUnless { it == "sin datos" }.orEmpty(),
+        weight = profile.weight.takeUnless { it == "sin datos" }.orEmpty(),
+        conditions = profile.conditions.takeUnless { it == "sin datos" }.orEmpty(),
+        allergies = profile.allergies.takeUnless { it == "sin datos" }.orEmpty(),
+        blood = profile.blood.takeUnless { it == "sin datos" }.orEmpty(),
+        address = profile.address.takeUnless { it == "sin datos" }.orEmpty(),
+        phone = profile.phone.takeUnless { it == "sin datos" }.orEmpty(),
+        doctor = profile.doctor.takeUnless { it == "sin datos" }.orEmpty(),
+        insurance = profile.insurance.takeUnless { it == "sin datos" }.orEmpty(),
+        version = profile.version,
+        timeZone = profile.timeZone,
+    )
 
     companion object {
         fun factory(container: AppContainer, session: ActiveSession): ViewModelProvider.Factory =

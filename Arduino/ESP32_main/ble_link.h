@@ -1,5 +1,6 @@
 #pragma once
 #include "store.h"
+#include <stddef.h>
 #include <stdint.h>
 
 enum class Enlace : uint8_t { Off = 0, Connected = 1, Authorized = 2 };

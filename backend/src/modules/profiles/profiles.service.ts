@@ -18,6 +18,16 @@ export interface ProfileView {
   status: string;
   version: number;
   myRelation: Relation;
+  ageYears: number | null;
+  height: string | null;
+  weight: string | null;
+  conditions: string | null;
+  allergies: string | null;
+  bloodType: string | null;
+  address: string | null;
+  phone: string | null;
+  doctor: string | null;
+  insurance: string | null;
 }
 
 export interface ProfileSummaryView {
@@ -33,6 +43,16 @@ interface ProfileRow {
   time_zone: string;
   status: string;
   version: number;
+  age_years: number | null;
+  height_text: string | null;
+  weight_text: string | null;
+  conditions_text: string | null;
+  allergies_text: string | null;
+  blood_type: string | null;
+  address_text: string | null;
+  phone_e164: string | null;
+  doctor_name: string | null;
+  insurance_text: string | null;
 }
 
 @Injectable()
@@ -58,12 +78,14 @@ export class ProfilesService {
         throw new DomainError('FORBIDDEN_ACTION');
       }
       const timeZone = input.timeZone ?? this.policy.defaultProfileTimeZone;
-      const created = await tx.$queryRaw<ProfileRow[]>`
+      const inserted = await tx.$queryRaw<ProfileRow[]>`
         INSERT INTO guardme.profiles (display_name, time_zone, created_by_account_id)
         VALUES (${input.displayName}, ${timeZone}, ${principal.accountId}::uuid)
-        RETURNING id, display_name, time_zone, status, version
+        RETURNING id, display_name, time_zone, status, version,
+          age_years, height_text, weight_text, conditions_text, allergies_text,
+          blood_type, address_text, phone_e164, doctor_name, insurance_text
       `;
-      const profile = created[0];
+      const profile = inserted[0];
       if (!profile) throw new DomainError('NOT_FOUND');
       await tx.$executeRaw`
         INSERT INTO guardme.profile_access (
@@ -119,13 +141,7 @@ export class ProfilesService {
   get(principal: Principal, profileId: string): Promise<ProfileView> {
     return this.db.asAccount(toAccountContext(principal), async (tx) => {
       const access = await this.access.requireAccess(tx, profileId);
-      const rows = await tx.$queryRaw<ProfileRow[]>`
-        SELECT id, display_name, time_zone, status, version
-        FROM guardme.profiles
-        WHERE id = ${profileId}::uuid
-      `;
-      const profile = rows[0];
-      if (!profile) throw new DomainError('NOT_FOUND');
+      const profile = await this.readProfile(tx, profileId);
       return toProfile(profile, access.relation);
     });
   }
@@ -138,33 +154,99 @@ export class ProfilesService {
     assertTimeZone(input.timeZone);
     return this.db.asAccount(toAccountContext(principal), async (tx) => {
       const access = await this.access.requireAccess(tx, profileId);
-      if (input.displayName === undefined && input.timeZone === undefined) {
-        const current = await this.readProfile(tx, profileId);
-        if (current.version !== input.expectedVersion) {
-          throw new DomainError('VERSION_CONFLICT', undefined, { current });
-        }
-        return toProfile(current, access.relation);
+      const current = await this.readProfile(tx, profileId);
+      if (current.version !== input.expectedVersion) {
+        throw new DomainError('VERSION_CONFLICT', undefined, {
+          current: toProfile(current, access.relation),
+        });
       }
+
+      const next = {
+        displayName: input.displayName ?? current.display_name,
+        timeZone: input.timeZone ?? current.time_zone,
+        ageYears:
+          input.ageYears !== undefined ? input.ageYears : current.age_years,
+        height:
+          input.height !== undefined
+            ? emptyToNull(input.height)
+            : current.height_text,
+        weight:
+          input.weight !== undefined
+            ? emptyToNull(input.weight)
+            : current.weight_text,
+        conditions:
+          input.conditions !== undefined
+            ? emptyToNull(input.conditions)
+            : current.conditions_text,
+        allergies:
+          input.allergies !== undefined
+            ? emptyToNull(input.allergies)
+            : current.allergies_text,
+        bloodType:
+          input.bloodType !== undefined
+            ? emptyToNull(input.bloodType)
+            : current.blood_type,
+        address:
+          input.address !== undefined
+            ? emptyToNull(input.address)
+            : current.address_text,
+        phone:
+          input.phone !== undefined
+            ? emptyToNull(input.phone)
+            : current.phone_e164,
+        doctor:
+          input.doctor !== undefined
+            ? emptyToNull(input.doctor)
+            : current.doctor_name,
+        insurance:
+          input.insurance !== undefined
+            ? emptyToNull(input.insurance)
+            : current.insurance_text,
+      };
+
       const updated = await tx.$queryRaw<ProfileRow[]>`
         UPDATE guardme.profiles
-        SET display_name = COALESCE(${input.displayName ?? null}, display_name),
-            time_zone = COALESCE(${input.timeZone ?? null}, time_zone)
+        SET display_name = ${next.displayName},
+            time_zone = ${next.timeZone},
+            age_years = ${next.ageYears},
+            height_text = ${next.height},
+            weight_text = ${next.weight},
+            conditions_text = ${next.conditions},
+            allergies_text = ${next.allergies},
+            blood_type = ${next.bloodType},
+            address_text = ${next.address},
+            phone_e164 = ${next.phone},
+            doctor_name = ${next.doctor},
+            insurance_text = ${next.insurance}
         WHERE id = ${profileId}::uuid
           AND version = ${input.expectedVersion}
-        RETURNING id, display_name, time_zone, status, version
+        RETURNING id, display_name, time_zone, status, version,
+          age_years, height_text, weight_text, conditions_text, allergies_text,
+          blood_type, address_text, phone_e164, doctor_name, insurance_text
       `;
       const profile = updated[0];
-      if (profile) return toProfile(profile, access.relation);
-      const current = await this.readProfile(tx, profileId);
+      if (profile) {
+        await this.audit.record(tx, {
+          operation: 'profile.update',
+          result: 'ok',
+          actorKind: 'account',
+          actorAccountId: principal.accountId,
+          profileId,
+        });
+        return toProfile(profile, access.relation);
+      }
+      const latest = await this.readProfile(tx, profileId);
       throw new DomainError('VERSION_CONFLICT', undefined, {
-        current: toProfile(current, access.relation),
+        current: toProfile(latest, access.relation),
       });
     });
   }
 
   private async readProfile(tx: Tx, profileId: string): Promise<ProfileRow> {
     const rows = await tx.$queryRaw<ProfileRow[]>`
-      SELECT id, display_name, time_zone, status, version
+      SELECT id, display_name, time_zone, status, version,
+        age_years, height_text, weight_text, conditions_text, allergies_text,
+        blood_type, address_text, phone_e164, doctor_name, insurance_text
       FROM guardme.profiles
       WHERE id = ${profileId}::uuid
     `;
@@ -182,11 +264,27 @@ function toProfile(row: ProfileRow, relation: Relation): ProfileView {
     status: row.status,
     version: row.version,
     myRelation: relation,
+    ageYears: row.age_years,
+    height: row.height_text,
+    weight: row.weight_text,
+    conditions: row.conditions_text,
+    allergies: row.allergies_text,
+    bloodType: row.blood_type,
+    address: row.address_text,
+    phone: row.phone_e164,
+    doctor: row.doctor_name,
+    insurance: row.insurance_text,
   };
 }
 
-function assertTimeZone(value: string | undefined): void {
-  if (value === undefined) return;
+function emptyToNull(value: string | null): string | null {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? null : trimmed;
+}
+
+function assertTimeZone(value: string | undefined | null): void {
+  if (value == null) return;
   if (!isIanaTimeZone(value)) {
     throw new DomainError('VALIDATION_FAILED', 'Validación fallida', {
       fields: [{ field: 'timeZone', messages: ['zona IANA inválida'] }],
