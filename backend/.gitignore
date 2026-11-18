@@ -1,8 +1,16 @@
 node_modules
 dist
 coverage
+
+# Secretos locales — solo se versionan los *.example (sin valores reales)
 .env
+.env.*
+!.env.example
+!.env.*.example
 .env.docker
+.env.local
+.env.*.local
+
 supabase/.temp
 supabase/.branches
 *.tsbuildinfo

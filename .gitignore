@@ -1,0 +1,22 @@
+# Entornos y secretos (nunca commitear valores reales)
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+
+# Claves y credenciales locales
+*.pem
+*.p12
+*.key
+credentials.json
+**/service-account*.json
+**/*-service-account.json
+
+# IDE / sistema
+.vscode/
+.DS_Store
+Thumbs.db

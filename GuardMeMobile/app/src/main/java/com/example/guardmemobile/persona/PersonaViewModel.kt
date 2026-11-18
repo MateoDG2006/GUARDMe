@@ -307,7 +307,7 @@ class PersonaViewModel(
                         )
                     }
                 }
-                delay(60_000)
+                delay(20_000)
             }
         }
     }

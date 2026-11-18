@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
@@ -39,9 +40,16 @@ class CuidadorViewModel(
     )
     val state: StateFlow<CuidadorState> = _state.asStateFlow()
     private var toastJob: Job? = null
+    private var zoneId: ZoneId = ZoneId.of("America/Panama")
 
     init {
         refresh()
+        viewModelScope.launch {
+            while (isActive) {
+                delay(20_000)
+                refreshLocation()
+            }
+        }
     }
 
     fun refresh() {
@@ -57,7 +65,7 @@ class CuidadorViewModel(
                 val canes = runCatching { container.api.listCanes(session.profileId) }
                     .getOrDefault(emptyList())
                 val location = runCatching { container.api.getLocation(session.profileId) }.getOrNull()
-                val zone = ZoneId.of(profile?.timeZone ?: "America/Panama")
+                zoneId = ZoneId.of(profile?.timeZone ?: "America/Panama")
                 _state.update { state ->
                     state.copy(
                         firstName = (profile?.displayName ?: session.profileName)
@@ -90,7 +98,7 @@ class CuidadorViewModel(
                             },
                         visits = emptyList(),
                         members = members.map { mapMember(it, session.accountId) },
-                        notices = notices.map { mapNotice(it, zone) },
+                        notices = notices.map { mapNotice(it, zoneId) },
                         history = incidents.mapIndexed { index, element ->
                             HistoryEvent(
                                 id = "inc-$index",
@@ -116,6 +124,13 @@ class CuidadorViewModel(
                             location?.reason == "not_enabled" -> "Ubicación deshabilitada"
                             else -> "Sin ubicación"
                         },
+                        locationAgeSeconds = location?.takeIf { it.available }?.ageSeconds,
+                        locationAccuracyM = location?.takeIf { it.available }?.accuracyM,
+                        locationTimeLabel = location
+                            ?.takeIf { it.available }
+                            ?.capturedAt
+                            ?.let { formatClock(it, zoneId) }
+                            .orEmpty(),
                         batteryPercent = 0,
                         firmware = "sin datos",
                         lastSignal = "sin datos",
@@ -148,6 +163,36 @@ class CuidadorViewModel(
 
     fun open(screen: CareScreen) {
         _state.update { it.copy(stack = it.stack + screen) }
+        if (screen is CareScreen.Live) refreshLocation()
+    }
+
+    fun refreshLocation() {
+        viewModelScope.launch {
+            val location = runCatching { container.api.getLocation(session.profileId) }.getOrNull()
+            _state.update { state ->
+                state.copy(
+                    locationLat = location?.takeIf { it.available }?.lat,
+                    locationLng = location?.takeIf { it.available }?.lng,
+                    locationLabel = when {
+                        location?.available == true && location.lat != null && location.lng != null ->
+                            "%.5f, %.5f · ±%.0fm".format(
+                                location.lat,
+                                location.lng,
+                                location.accuracyM ?: 0.0,
+                            )
+                        location?.reason == "not_enabled" -> "Ubicación deshabilitada"
+                        else -> "Sin ubicación"
+                    },
+                    locationAgeSeconds = location?.takeIf { it.available }?.ageSeconds,
+                    locationAccuracyM = location?.takeIf { it.available }?.accuracyM,
+                    locationTimeLabel = location
+                        ?.takeIf { it.available }
+                        ?.capturedAt
+                        ?.let { formatClock(it, zoneId) }
+                        .orEmpty(),
+                )
+            }
+        }
     }
 
     fun back() {
@@ -407,6 +452,12 @@ class CuidadorViewModel(
             opensAuto911 = row.type.contains("911", ignoreCase = true),
         )
     }
+
+    private fun formatClock(iso: String, zone: ZoneId): String =
+        runCatching {
+            Instant.parse(iso).atZone(zone).toLocalTime()
+                .format(DateTimeFormatter.ofPattern("HH:mm"))
+        }.getOrDefault("")
 
     companion object {
         fun factory(container: AppContainer, session: ActiveSession): ViewModelProvider.Factory =

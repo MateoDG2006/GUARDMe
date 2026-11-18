@@ -226,15 +226,20 @@
     <string name="auto_banner">La llamada automática al 911 está pendiente · %1$s · %2$s</string>
     <string name="auto_status">911 automático pendiente</string>
     <string name="city_line">%1$s · precisión %2$s</string>
-    <string name="accuracy_value">15 m</string>
-    <string name="minutes_ago">hace 2 min</string>
+    <string name="accuracy_value">%1$.0f m</string>
+    <string name="accuracy_unknown">sin dato</string>
+    <string name="minutes_ago">hace %1$d min</string>
+    <string name="seconds_ago">hace %1$d s</string>
+    <string name="location_age_unknown">antigüedad desconocida</string>
 
-    <string name="live_header">En vivo · cada 2 min mientras camina</string>
-    <string name="live_walking">%1$s está caminando</string>
+    <string name="live_header">En vivo · se actualiza sola</string>
+    <string name="live_walking">%1$s · última posición</string>
     <string name="km_from_home">km desde casa</string>
     <string name="min_out">min fuera</string>
     <string name="accuracy_label">precisión</string>
-    <string name="route_today">Recorrido de hoy</string>
+    <string name="route_today">Última ubicación</string>
+    <string name="route_empty">Solo se comparte la última posición. No hay historial de recorrido.</string>
+    <string name="route_last_known">Última posición conocida</string>
 
     <string name="notif_title">Notificaciones</string>
     <string name="mark_read">Marcar leídas</string>

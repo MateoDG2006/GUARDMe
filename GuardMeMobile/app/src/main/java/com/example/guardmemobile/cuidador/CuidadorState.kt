@@ -171,6 +171,9 @@ data class CuidadorState(
     val locationLat: Double? = null,
     val locationLng: Double? = null,
     val locationLabel: String = "Sin ubicación",
+    val locationAgeSeconds: Int? = null,
+    val locationAccuracyM: Double? = null,
+    val locationTimeLabel: String = "",
 ) {
     val screen: CareScreen get() = stack.last()
     val youName: String get() = members.firstOrNull { it.isYou }?.name ?: "Ana"

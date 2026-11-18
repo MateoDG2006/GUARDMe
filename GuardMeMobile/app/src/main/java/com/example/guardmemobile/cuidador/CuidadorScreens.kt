@@ -262,7 +262,15 @@ fun CuidadorAlert(state: CuidadorState, viewModel: CuidadorViewModel) {
                 placeholder = state.locationLabel,
             )
             Text(state.locationLabel, color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 17.sp)
-            Text(stringResource(R.string.city_line, stringResource(R.string.minutes_ago), stringResource(R.string.accuracy_value)), color = GuardColor.WarmGray, style = Meta)
+            Text(
+                stringResource(
+                    R.string.city_line,
+                    locationAgeLabel(state.locationAgeSeconds),
+                    locationAccuracyLabel(state.locationAccuracyM),
+                ),
+                color = GuardColor.WarmGray,
+                style = Meta,
+            )
             GuardOutlineButton(stringResource(R.string.how_to_get), { viewModel.show(CareToast.RoutePending) }, Modifier.fillMaxWidth(), height = 48.dp)
             if (auto) {
                 GuardCard(container = GuardColor.Sand, bordered = false) {
@@ -316,6 +324,8 @@ private fun timeline(auto: Boolean): List<String> {
 
 @Composable
 fun CuidadorLive(state: CuidadorState, viewModel: CuidadorViewModel) {
+    val ageLabel = locationAgeLabel(state.locationAgeSeconds)
+    val accuracyLabel = locationAccuracyLabel(state.locationAccuracyM)
     CarePage(stringResource(R.string.live_header), viewModel::back) {
         GuardCard {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -323,7 +333,7 @@ fun CuidadorLive(state: CuidadorState, viewModel: CuidadorViewModel) {
                 Column {
                     Text(stringResource(R.string.live_walking, state.firstName), color = GuardColor.Navy, fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(state.locationLabel, color = GuardColor.WarmGray, style = Meta)
-                    Text(stringResource(R.string.minutes_ago), color = GuardColor.WarmGray, style = Caption)
+                    Text(ageLabel, color = GuardColor.WarmGray, style = Caption)
                 }
             }
         }
@@ -333,25 +343,58 @@ fun CuidadorLive(state: CuidadorState, viewModel: CuidadorViewModel) {
             modifier = Modifier.fillMaxWidth().height(180.dp),
             placeholder = state.locationLabel,
         )
-        Text(stringResource(R.string.city_line, "Ciudad de Panamá", stringResource(R.string.accuracy_value)), color = GuardColor.Navy, style = Body)
+        Text(
+            stringResource(R.string.city_line, ageLabel, accuracyLabel),
+            color = GuardColor.Navy,
+            style = Body,
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            MetricCell("0,8", stringResource(R.string.km_from_home), Modifier.weight(1f))
-            MetricCell("24", stringResource(R.string.min_out), Modifier.weight(1f))
-            MetricCell("15 m", stringResource(R.string.accuracy_label), Modifier.weight(1f))
+            MetricCell("—", stringResource(R.string.km_from_home), Modifier.weight(1f))
+            MetricCell(
+                state.locationAgeSeconds?.let { (it / 60).coerceAtLeast(0).toString() } ?: "—",
+                stringResource(R.string.min_out),
+                Modifier.weight(1f),
+            )
+            MetricCell(accuracyLabel, stringResource(R.string.accuracy_label), Modifier.weight(1f))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             GuardOutlineButton(stringResource(R.string.how_to_get), { viewModel.show(CareToast.RoutePending) }, Modifier.weight(1f), height = 52.dp)
             GuardPrimaryButton(stringResource(R.string.call_name, state.firstName), { viewModel.startCall(CareCall.Person) }, Modifier.weight(1f), height = 52.dp, textStyle = ButtonCare)
         }
+        // shortcut: backend only stores latest point, not a trail; replace when location history exists
         GuardSectionTitle(stringResource(R.string.route_today))
-        listOf("Calle 50, cerca de casa" to "9:05", "Parque Omar" to "8:40", "Casa, Calle 50" to "8:10").forEach { (place, time) ->
+        if (state.locationLat == null || state.locationLng == null) {
+            Text(stringResource(R.string.route_empty), color = GuardColor.WarmGray, style = Body)
+        } else {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(place, color = GuardColor.Navy, style = Body, modifier = Modifier.weight(1f))
-                Text(time, color = GuardColor.WarmGray, style = Meta)
+                Text(
+                    stringResource(R.string.route_last_known),
+                    color = GuardColor.Navy,
+                    style = Body,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    state.locationTimeLabel.ifBlank { ageLabel },
+                    color = GuardColor.WarmGray,
+                    style = Meta,
+                )
             }
+            Text(state.locationLabel, color = GuardColor.WarmGray, style = Caption)
         }
     }
 }
+
+@Composable
+private fun locationAgeLabel(ageSeconds: Int?): String = when {
+    ageSeconds == null -> stringResource(R.string.location_age_unknown)
+    ageSeconds < 60 -> stringResource(R.string.seconds_ago, ageSeconds)
+    else -> stringResource(R.string.minutes_ago, ageSeconds / 60)
+}
+
+@Composable
+private fun locationAccuracyLabel(accuracyM: Double?): String =
+    if (accuracyM == null) stringResource(R.string.accuracy_unknown)
+    else stringResource(R.string.accuracy_value, accuracyM)
 
 @Composable
 fun CuidadorNotifications(state: CuidadorState, viewModel: CuidadorViewModel) {
